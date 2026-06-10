@@ -89,6 +89,9 @@ public class MainMenu extends JFrame {
                 e -> new CourseForm()
         );
 
+        reportButton.addActionListener(
+                e -> new ReportForm()
+        );
         enrollmentButton =
                 new JButton(
                         "Enrollment System"
