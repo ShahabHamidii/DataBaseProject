@@ -1,11 +1,9 @@
-import dao.StudentDAO;
-import model.Student;
-import ui.StudentForm;
+import ui.MainMenu;
+
 public class Main {
 
     public static void main(String[] args) {
-        new StudentForm();
 
-
+        new MainMenu();
     }
 }
