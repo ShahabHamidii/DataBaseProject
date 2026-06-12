@@ -19,6 +19,8 @@ public class MainMenu extends JFrame {
 
     private JButton instructorButton;
 
+    private JButton advisorButton;
+
     public MainMenu() {
 
         setTitle("University DBMS");
@@ -42,7 +44,7 @@ public class MainMenu extends JFrame {
                 new JPanel();
 
         panel.setLayout(
-                new GridLayout(7, 1, 20, 20)
+                new GridLayout(8, 1, 20, 20)
         );
 
         panel.setBorder(
@@ -82,6 +84,18 @@ public class MainMenu extends JFrame {
                         "Instructor Management"
                 );
 
+        advisorButton =
+                new JButton(
+                        "Advisor Assignment"
+                );
+
+        enrollmentButton =
+                new JButton(
+                        "Enrollment System"
+                );
+
+        panel.add(enrollmentButton);
+
         panel.add(studentButton);
 
         panel.add(courseButton);
@@ -93,6 +107,8 @@ public class MainMenu extends JFrame {
         panel.add(dashboardButton);
 
         panel.add(instructorButton);
+
+        panel.add(advisorButton);
 
         add(panel);
 
@@ -113,12 +129,6 @@ public class MainMenu extends JFrame {
         reportButton.addActionListener(
                 e -> new ReportForm()
         );
-        enrollmentButton =
-                new JButton(
-                        "Enrollment System"
-                );
-
-        panel.add(enrollmentButton);
 
         enrollmentButton.addActionListener(
                 e -> new EnrollmentForm()
@@ -130,6 +140,10 @@ public class MainMenu extends JFrame {
 
         instructorButton.addActionListener(
                 e -> new InstructorForm()
+        );
+
+        advisorButton.addActionListener(
+                e -> new AdvisorForm()
         );
     }
 }
