@@ -15,6 +15,8 @@ public class ReportForm extends JFrame {
 
     private JButton loadButton;
 
+    private JButton departmentStatsButton;
+
     public ReportForm() {
 
         setTitle("Enrollment Reports");
@@ -38,6 +40,16 @@ public class ReportForm extends JFrame {
                 );
 
         add(loadButton, BorderLayout.NORTH);
+
+        departmentStatsButton =
+                new JButton(
+                        "Students Per Department"
+                );
+
+        add(
+                departmentStatsButton,
+                BorderLayout.SOUTH
+        );
 
         String[] columns = {
 
@@ -66,6 +78,10 @@ public class ReportForm extends JFrame {
         loadButton.addActionListener(
                 e -> loadReports()
         );
+
+        departmentStatsButton.addActionListener(
+                e -> loadDepartmentStats()
+        );
     }
 
     private void loadReports() {
@@ -79,6 +95,28 @@ public class ReportForm extends JFrame {
                 dao.getEnrollmentReport();
 
         for (Object[] row : reports) {
+
+            tableModel.addRow(row);
+        }
+    }
+
+    private void loadDepartmentStats() {
+
+        tableModel.setRowCount(0);
+
+        tableModel.setColumnCount(0);
+
+        tableModel.addColumn("Department");
+
+        tableModel.addColumn("Students");
+
+        ReportDAO dao =
+                new ReportDAO();
+
+        List<Object[]> rows =
+                dao.getStudentsPerDepartment();
+
+        for (Object[] row : rows) {
 
             tableModel.addRow(row);
         }

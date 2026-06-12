@@ -87,4 +87,49 @@ public class ReportDAO {
 
         return rows;
     }
+    public List<Object[]> getStudentsPerDepartment() {
+
+        List<Object[]> rows =
+                new ArrayList<>();
+
+        String sql =
+
+                "SELECT dept_name, COUNT(*) AS total_students " +
+
+                        "FROM student " +
+
+                        "GROUP BY dept_name";
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql);
+
+                ResultSet rs =
+                        pst.executeQuery()
+
+        ) {
+
+            while (rs.next()) {
+
+                Object[] row = {
+
+                        rs.getString("dept_name"),
+
+                        rs.getInt("total_students")
+                };
+
+                rows.add(row);
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return rows;
+    }
 }
