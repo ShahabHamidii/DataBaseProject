@@ -15,6 +15,8 @@ public class MainMenu extends JFrame {
 
     private JButton enrollmentButton;
 
+    private JButton dashboardButton;
+
     public MainMenu() {
 
         setTitle("University DBMS");
@@ -50,6 +52,9 @@ public class MainMenu extends JFrame {
                 )
         );
 
+        dashboardButton =
+                new JButton("Dashboard");
+
         studentButton =
                 new JButton(
                         "Student Management"
@@ -78,9 +83,16 @@ public class MainMenu extends JFrame {
 
         panel.add(exitButton);
 
+        panel.add(dashboardButton);
+
         add(panel);
 
         // Actions
+
+        dashboardButton.addActionListener(
+                e -> new DashboardForm()
+        );
+
         studentButton.addActionListener(
                 e -> new StudentForm()
         );
