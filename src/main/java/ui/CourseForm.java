@@ -399,7 +399,9 @@ public class CourseForm extends JFrame {
 
         List<Course> courses =
                 new CourseDAO()
-                        .getAllCourses();
+                        .searchByDepartment(
+                                searchField.getText()
+                        );
 
         for (Course course : courses) {
 

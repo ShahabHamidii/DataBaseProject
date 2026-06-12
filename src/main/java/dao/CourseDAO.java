@@ -45,6 +45,7 @@ public class CourseDAO {
         return false;
 
     }
+
     public List<Course> getAllCourses() {
 
         List<Course> courses =
@@ -86,6 +87,7 @@ public class CourseDAO {
 
         return courses;
     }
+
     public boolean updateCourse(Course course) {
 
         String sql =
@@ -119,6 +121,7 @@ public class CourseDAO {
 
         return false;
     }
+
     public boolean deleteCourse(String courseId) {
 
         String sql =
@@ -146,4 +149,49 @@ public class CourseDAO {
         return false;
     }
 
+    public List<Course> searchByDepartment(
+            String deptName
+    ) {
+
+        List<Course> courses =
+                new ArrayList<>();
+
+        String sql =
+                "SELECT * FROM course " +
+                        "WHERE dept_name = ?";
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql)
+
+        ) {
+
+            pst.setString(1, deptName);
+
+            ResultSet rs =
+                    pst.executeQuery();
+
+            while (rs.next()) {
+
+                courses.add(
+                        new Course(
+                                rs.getString("course_id"),
+                                rs.getString("title"),
+                                rs.getString("dept_name"),
+                                rs.getInt("credits")
+                        )
+                );
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return courses;
+    }
 }

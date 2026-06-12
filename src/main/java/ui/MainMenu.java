@@ -40,7 +40,7 @@ public class MainMenu extends JFrame {
                 new JPanel();
 
         panel.setLayout(
-                new GridLayout(5, 1, 20, 20)
+                new GridLayout(6, 1, 20, 20)
         );
 
         panel.setBorder(

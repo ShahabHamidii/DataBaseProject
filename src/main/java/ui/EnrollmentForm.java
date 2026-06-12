@@ -1,15 +1,18 @@
 package ui;
 
+import dao.CourseDAO;
 import dao.EnrollmentDAO;
-
+import dao.StudentDAO;
+import model.Course;
+import model.Student;
 import javax.swing.*;
 import java.awt.*;
 
 public class EnrollmentForm extends JFrame {
 
-    private JTextField studentField;
+    private JComboBox<Student> studentCombo;
 
-    private JTextField courseField;
+    private JComboBox<Course> courseCombo;
 
     private JTextField sectionField;
 
@@ -28,6 +31,10 @@ public class EnrollmentForm extends JFrame {
         setLocationRelativeTo(null);
 
         initComponents();
+
+        loadStudents();
+
+        loadCourses();
 
         setVisible(true);
     }
@@ -53,20 +60,19 @@ public class EnrollmentForm extends JFrame {
                 new JLabel("Student ID:")
         );
 
-        studentField =
-                new JTextField();
+        studentCombo =
+                new JComboBox<>();
 
-        panel.add(studentField);
-
+        panel.add(studentCombo);
         // Course ID
         panel.add(
                 new JLabel("Course ID:")
         );
 
-        courseField =
-                new JTextField();
+        courseCombo =
+                new JComboBox<>();
 
-        panel.add(courseField);
+        panel.add(courseCombo);
 
         // Section ID
         panel.add(
@@ -117,13 +123,17 @@ public class EnrollmentForm extends JFrame {
 
         try {
 
+            Student student =
+                    (Student) studentCombo.getSelectedItem();
+
             int studentId =
-                    Integer.parseInt(
-                            studentField.getText()
-                    );
+                    student.getId();
+
+            Course course =
+                    (Course) courseCombo.getSelectedItem();
 
             String courseId =
-                    courseField.getText();
+                    course.getCourseId();
 
             String secId =
                     sectionField.getText();
@@ -169,6 +179,29 @@ public class EnrollmentForm extends JFrame {
                     this,
                     e.getMessage()
             );
+        }
+    }
+
+    private void loadStudents() {
+
+        StudentDAO dao =
+                new StudentDAO();
+
+        for (Student student :
+                dao.getAllStudents()) {
+
+            studentCombo.addItem(student);
+        }
+    }
+    private void loadCourses() {
+
+        CourseDAO dao =
+                new CourseDAO();
+
+        for (Course course :
+                dao.getAllCourses()) {
+
+            courseCombo.addItem(course);
         }
     }
 }

@@ -8,23 +8,17 @@ import java.awt.*;
 public class DashboardForm extends JFrame {
 
     private JLabel studentLabel;
-
     private JLabel courseLabel;
-
     private JLabel enrollmentLabel;
-
     private JLabel departmentLabel;
 
     public DashboardForm() {
 
         setTitle("Dashboard");
-
         setSize(600, 400);
-
         setLocationRelativeTo(null);
 
         initComponents();
-
         loadStatistics();
 
         setVisible(true);
@@ -32,57 +26,29 @@ public class DashboardForm extends JFrame {
 
     private void initComponents() {
 
-        JPanel panel =
-                new JPanel(
-                        new GridLayout(4, 1, 20, 20)
-                );
+        JPanel panel = new JPanel(
+                new GridLayout(4, 1, 20, 20)
+        );
 
         studentLabel = new JLabel();
-
         courseLabel = new JLabel();
-
         enrollmentLabel = new JLabel();
-
         departmentLabel = new JLabel();
 
-        studentLabel.setFont(
-                new Font(
-                        "Arial",
-                        Font.BOLD,
-                        22
-                )
+        Font font = new Font(
+                "Arial",
+                Font.BOLD,
+                22
         );
 
-        courseLabel.setFont(
-                new Font(
-                        "Arial",
-                        Font.BOLD,
-                        22
-                )
-        );
-
-        enrollmentLabel.setFont(
-                new Font(
-                        "Arial",
-                        Font.BOLD,
-                        22
-                )
-        );
-
-        departmentLabel.setFont(
-                new Font(
-                        "Arial",
-                        Font.BOLD,
-                        22
-                )
-        );
+        studentLabel.setFont(font);
+        courseLabel.setFont(font);
+        enrollmentLabel.setFont(font);
+        departmentLabel.setFont(font);
 
         panel.add(studentLabel);
-
         panel.add(courseLabel);
-
         panel.add(enrollmentLabel);
-
         panel.add(departmentLabel);
 
         add(panel);
@@ -94,23 +60,23 @@ public class DashboardForm extends JFrame {
                 new StatisticsDAO();
 
         studentLabel.setText(
-                "Students: "
-                        + dao.getStudentCount()
+                "Students: " +
+                        dao.getStudentCount()
         );
 
         courseLabel.setText(
-                "Courses: "
-                        + dao.getCourseCount()
+                "Courses: " +
+                        dao.getCourseCount()
         );
 
         enrollmentLabel.setText(
-                "Enrollments: "
-                        + dao.getEnrollmentCount()
+                "Enrollments: " +
+                        dao.getEnrollmentCount()
         );
 
         departmentLabel.setText(
-                "Departments: "
-                        + dao.getDepartmentCount()
+                "Departments: " +
+                        dao.getDepartmentCount()
         );
     }
 }
