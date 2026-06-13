@@ -21,6 +21,8 @@ public class MainMenu extends JFrame {
 
     private JButton advisorButton;
 
+    private JButton prerequisiteButton;
+
     public MainMenu() {
 
         setTitle("University DBMS");
@@ -44,7 +46,7 @@ public class MainMenu extends JFrame {
                 new JPanel();
 
         panel.setLayout(
-                new GridLayout(8, 1, 20, 20)
+                new GridLayout(9, 1, 20, 20)
         );
 
         panel.setBorder(
@@ -94,6 +96,11 @@ public class MainMenu extends JFrame {
                         "Enrollment System"
                 );
 
+        prerequisiteButton =
+                new JButton(
+                        "Prerequisite Management"
+                );
+
         panel.add(enrollmentButton);
 
         panel.add(studentButton);
@@ -109,6 +116,8 @@ public class MainMenu extends JFrame {
         panel.add(instructorButton);
 
         panel.add(advisorButton);
+
+        panel.add(prerequisiteButton);
 
         add(panel);
 
@@ -144,6 +153,10 @@ public class MainMenu extends JFrame {
 
         advisorButton.addActionListener(
                 e -> new AdvisorForm()
+        );
+
+        prerequisiteButton.addActionListener(
+                e -> new PrerequisiteForm()
         );
     }
 }
