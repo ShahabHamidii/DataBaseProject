@@ -117,6 +117,11 @@ public class InstructorForm extends JFrame {
         deleteButton.addActionListener(
                 e -> deleteInstructor()
         );
+
+        table.getSelectionModel()
+                .addListSelectionListener(
+                        e -> fillFormFromTable()
+                );
     }
 
     private void addInstructor() {
@@ -225,5 +230,44 @@ public class InstructorForm extends JFrame {
 
             loadInstructors();
         }
+    }
+
+    private void fillFormFromTable() {
+
+        int row =
+                table.getSelectedRow();
+
+        if(row == -1) {
+
+            return;
+        }
+
+        idField.setText(
+                tableModel.getValueAt(
+                        row,
+                        0
+                ).toString()
+        );
+
+        nameField.setText(
+                tableModel.getValueAt(
+                        row,
+                        1
+                ).toString()
+        );
+
+        deptField.setText(
+                tableModel.getValueAt(
+                        row,
+                        2
+                ).toString()
+        );
+
+        salaryField.setText(
+                tableModel.getValueAt(
+                        row,
+                        3
+                ).toString()
+        );
     }
 }

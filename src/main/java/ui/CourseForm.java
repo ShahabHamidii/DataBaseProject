@@ -183,6 +183,10 @@ public class CourseForm extends JFrame {
                 e -> searchCourses()
         );
 
+        table.getSelectionModel()
+                .addListSelectionListener(
+                        e -> fillFormFromTable()
+                );
         // Table Selection
         table.getSelectionModel()
                 .addListSelectionListener(e -> {
@@ -433,5 +437,44 @@ public class CourseForm extends JFrame {
         deptField.setText("");
 
         creditsField.setText("");
+    }
+
+    private void fillFormFromTable() {
+
+        int row =
+                table.getSelectedRow();
+
+        if(row == -1) {
+
+            return;
+        }
+
+        idField.setText(
+                tableModel.getValueAt(
+                        row,
+                        0
+                ).toString()
+        );
+
+        titleField.setText(
+                tableModel.getValueAt(
+                        row,
+                        1
+                ).toString()
+        );
+
+        deptField.setText(
+                tableModel.getValueAt(
+                        row,
+                        2
+                ).toString()
+        );
+
+        creditsField.setText(
+                tableModel.getValueAt(
+                        row,
+                        3
+                ).toString()
+        );
     }
 }
