@@ -2,10 +2,12 @@ package ui;
 
 import dao.SectionDAO;
 import model.Section;
+import util.ValidationUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+
 
 public class SectionForm extends JFrame {
 
@@ -142,6 +144,61 @@ public class SectionForm extends JFrame {
     }
 
     private void addSection() {
+
+        if (
+
+                ValidationUtil.isEmpty(
+                        courseIdField.getText()
+                )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                secIdField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                semesterField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                yearField.getText()
+                        )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "Required fields missing."
+
+            );
+
+            return;
+        }
+        if (
+
+                !ValidationUtil.isInteger(
+                        yearField.getText()
+                )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "Year must be numeric."
+
+            );
+
+            return;
+        }
 
         Section section =
                 new Section(

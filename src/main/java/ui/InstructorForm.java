@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
+import util.ValidationUtil;
+
 public class InstructorForm extends JFrame {
 
     private JTextField idField;
@@ -125,6 +127,67 @@ public class InstructorForm extends JFrame {
     }
 
     private void addInstructor() {
+        if (
+
+                ValidationUtil.isEmpty(
+                        idField.getText()
+                )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                nameField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                deptField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                salaryField.getText()
+                        )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "All fields are required."
+
+            );
+
+            return;
+        }
+
+        if (
+
+                !ValidationUtil.isInteger(
+                        idField.getText()
+                )
+
+                        ||
+
+                        !ValidationUtil.isDouble(
+                                salaryField.getText()
+                        )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "Invalid numeric values."
+
+            );
+
+            return;
+        }
 
         Instructor instructor =
                 new Instructor(
@@ -166,6 +229,68 @@ public class InstructorForm extends JFrame {
     }
 
     private void updateInstructor() {
+
+        if (
+
+                ValidationUtil.isEmpty(
+                        idField.getText()
+                )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                nameField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                deptField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                salaryField.getText()
+                        )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "All fields are required."
+
+            );
+
+            return;
+        }
+
+        if (
+
+                !ValidationUtil.isInteger(
+                        idField.getText()
+                )
+
+                        ||
+
+                        !ValidationUtil.isDouble(
+                                salaryField.getText()
+                        )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "Invalid numeric values."
+
+            );
+
+            return;
+        }
 
         Instructor instructor =
                 new Instructor(
@@ -237,7 +362,7 @@ public class InstructorForm extends JFrame {
         int row =
                 table.getSelectedRow();
 
-        if(row == -1) {
+        if (row == -1) {
 
             return;
         }

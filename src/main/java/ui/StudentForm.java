@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.event.ListSelectionEvent;
 
+import util.ValidationUtil;
+
 public class StudentForm extends JFrame {
 
     private JTextField idField;
@@ -196,6 +198,67 @@ public class StudentForm extends JFrame {
 
     private void addStudent() {
 
+        if (
+
+                ValidationUtil.isEmpty(
+                        idField.getText()
+                )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                nameField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                deptField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                creditField.getText()
+                        )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "All fields are required."
+
+            );
+
+            return;
+        }
+        if (
+
+                !ValidationUtil.isInteger(
+                        idField.getText()
+                )
+
+                        ||
+
+                        !ValidationUtil.isInteger(
+                                creditField.getText()
+                        )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "ID and Credits must be numbers."
+
+            );
+
+            return;
+        }
+
         try {
 
             int id =
@@ -282,6 +345,67 @@ public class StudentForm extends JFrame {
     }
 
     private void updateStudent() {
+        if (
+
+                ValidationUtil.isEmpty(
+                        idField.getText()
+                )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                nameField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                deptField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                creditField.getText()
+                        )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "All fields are required."
+
+            );
+
+            return;
+        }
+
+        if (
+
+                !ValidationUtil.isInteger(
+                        idField.getText()
+                )
+
+                        ||
+
+                        !ValidationUtil.isInteger(
+                                creditField.getText()
+                        )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "ID and Credits must be numbers."
+
+            );
+
+            return;
+        }
 
         try {
 
@@ -413,12 +537,13 @@ public class StudentForm extends JFrame {
             tableModel.addRow(row);
         }
     }
+
     private void fillFormFromTable() {
 
         int row =
                 table.getSelectedRow();
 
-        if(row == -1) {
+        if (row == -1) {
 
             return;
         }

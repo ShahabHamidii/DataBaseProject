@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
+import util.ValidationUtil;
+
 public class CourseForm extends JFrame {
 
     private JTextField idField;
@@ -229,6 +231,62 @@ public class CourseForm extends JFrame {
 
     private void addCourse() {
 
+        if (
+
+                ValidationUtil.isEmpty(
+                        idField.getText()
+                )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                titleField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                deptField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                creditsField.getText()
+                        )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "All fields are required."
+
+            );
+
+            return;
+        }
+
+        if (
+
+                !ValidationUtil.isInteger(
+                        creditsField.getText()
+                )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "Credits must be numeric."
+
+            );
+
+            return;
+        }
+
         try {
 
             Course course =
@@ -306,6 +364,62 @@ public class CourseForm extends JFrame {
     }
 
     private void updateCourse() {
+
+        if (
+
+                ValidationUtil.isEmpty(
+                        idField.getText()
+                )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                titleField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                deptField.getText()
+                        )
+
+                        ||
+
+                        ValidationUtil.isEmpty(
+                                creditsField.getText()
+                        )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "All fields are required."
+
+            );
+
+            return;
+        }
+
+        if (
+
+                !ValidationUtil.isInteger(
+                        creditsField.getText()
+                )
+
+        ) {
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "Credits must be numeric."
+
+            );
+
+            return;
+        }
 
         try {
 
@@ -444,7 +558,7 @@ public class CourseForm extends JFrame {
         int row =
                 table.getSelectedRow();
 
-        if(row == -1) {
+        if (row == -1) {
 
             return;
         }
