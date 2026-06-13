@@ -25,6 +25,8 @@ public class MainMenu extends JFrame {
 
     private JButton teachingButton;
 
+    private JButton sectionButton;
+
     public MainMenu() {
 
         setTitle("University DBMS");
@@ -48,7 +50,7 @@ public class MainMenu extends JFrame {
                 new JPanel();
 
         panel.setLayout(
-                new GridLayout(10, 1, 20, 20)
+                new GridLayout(11, 1, 20, 20)
         );
 
         panel.setBorder(
@@ -108,6 +110,11 @@ public class MainMenu extends JFrame {
                         "Teaching Assignments"
                 );
 
+        sectionButton =
+                new JButton(
+                        "Section Management"
+                );
+
         panel.add(enrollmentButton);
 
         panel.add(studentButton);
@@ -127,6 +134,8 @@ public class MainMenu extends JFrame {
         panel.add(prerequisiteButton);
 
         panel.add(teachingButton);
+
+        panel.add(sectionButton);
 
         add(panel);
 
@@ -169,7 +178,11 @@ public class MainMenu extends JFrame {
         );
 
         teachingButton.addActionListener(
-                            e -> new TeachingAssignmentForm()
+                e -> new TeachingAssignmentForm()
+        );
+
+        sectionButton.addActionListener(
+                e -> new SectionForm()
         );
     }
 }
