@@ -24,11 +24,14 @@ public class SectionForm extends JFrame {
 
     private DefaultTableModel tableModel;
 
+    private JButton updateButton;
+    private JButton deleteButton;
+
     public SectionForm() {
 
         setTitle("Section Management");
 
-        setSize(1100,700);
+        setSize(1100, 700);
 
         setLocationRelativeTo(null);
 
@@ -43,7 +46,7 @@ public class SectionForm extends JFrame {
 
         JPanel panel =
                 new JPanel(
-                        new GridLayout(8,2)
+                        new GridLayout(8, 2)
                 );
 
         courseIdField = new JTextField();
@@ -81,8 +84,16 @@ public class SectionForm extends JFrame {
         loadButton =
                 new JButton("Load");
 
+        updateButton =
+                new JButton("Update");
+
+        deleteButton =
+                new JButton("Delete");
+
         panel.add(addButton);
         panel.add(loadButton);
+        panel.add(updateButton);
+        panel.add(deleteButton);
 
         add(panel, BorderLayout.NORTH);
 
@@ -115,6 +126,19 @@ public class SectionForm extends JFrame {
         loadButton.addActionListener(
                 e -> loadSections()
         );
+
+        updateButton.addActionListener(
+                e -> updateSection()
+        );
+
+        deleteButton.addActionListener(
+                e -> deleteSection()
+        );
+
+        table.getSelectionModel()
+                .addListSelectionListener(
+                        e -> fillFormFromTable()
+                );
     }
 
     private void addSection() {
@@ -136,7 +160,7 @@ public class SectionForm extends JFrame {
                 new SectionDAO()
                         .addSection(section);
 
-        if(result) {
+        if (result) {
 
             loadSections();
         }
@@ -146,7 +170,7 @@ public class SectionForm extends JFrame {
 
         tableModel.setRowCount(0);
 
-        for(
+        for (
                 Section section :
                 new SectionDAO()
                         .getAllSections()
@@ -165,6 +189,121 @@ public class SectionForm extends JFrame {
                             section.getTimeSlotId()
                     }
             );
+        }
+    }
+
+    private void fillFormFromTable() {
+
+        int row =
+                table.getSelectedRow();
+
+        if (row == -1) {
+
+            return;
+        }
+
+        courseIdField.setText(
+                tableModel.getValueAt(row, 0)
+                        .toString()
+        );
+
+        secIdField.setText(
+                tableModel.getValueAt(row, 1)
+                        .toString()
+        );
+
+        semesterField.setText(
+                tableModel.getValueAt(row, 2)
+                        .toString()
+        );
+
+        yearField.setText(
+                tableModel.getValueAt(row, 3)
+                        .toString()
+        );
+
+        buildingField.setText(
+                tableModel.getValueAt(row, 4)
+                        .toString()
+        );
+
+        roomField.setText(
+                tableModel.getValueAt(row, 5)
+                        .toString()
+        );
+
+        timeSlotField.setText(
+                tableModel.getValueAt(row, 6)
+                        .toString()
+        );
+    }
+
+    private void deleteSection() {
+
+        int choice =
+
+                JOptionPane.showConfirmDialog(
+
+                        this,
+
+                        "Delete Section?",
+
+                        "Confirm",
+
+                        JOptionPane.YES_NO_OPTION
+                );
+
+        if (choice != JOptionPane.YES_OPTION) {
+
+            return;
+        }
+
+        boolean result =
+
+                new SectionDAO()
+                        .deleteSection(
+
+                                courseIdField.getText(),
+
+                                secIdField.getText(),
+
+                                semesterField.getText(),
+
+                                Integer.parseInt(
+                                        yearField.getText()
+                                )
+                        );
+
+        if (result) {
+
+            loadSections();
+        }
+    }
+
+    private void updateSection() {
+
+        Section section =
+                new Section(
+                        courseIdField.getText(),
+                        secIdField.getText(),
+                        semesterField.getText(),
+                        Integer.parseInt(
+                                yearField.getText()
+                        ),
+                        buildingField.getText(),
+                        roomField.getText(),
+                        timeSlotField.getText()
+                );
+
+        boolean result =
+                new SectionDAO()
+                        .updateSection(
+                                section
+                        );
+
+        if (result) {
+
+            loadSections();
         }
     }
 }

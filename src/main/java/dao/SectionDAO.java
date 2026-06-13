@@ -91,4 +91,101 @@ public class SectionDAO {
 
         return sections;
     }
+
+    public boolean updateSection(
+            Section section
+    ) {
+
+        String sql =
+                """
+                UPDATE section
+                SET
+                    building = ?,
+                    room_number = ?,
+                    time_slot_id = ?
+                WHERE
+                    course_id = ?
+                    AND sec_id = ?
+                    AND semester = ?
+                    AND year = ?
+                """;
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql)
+
+        ) {
+
+            pst.setString(1, section.getBuilding());
+
+            pst.setString(2, section.getRoomNumber());
+
+            pst.setString(3, section.getTimeSlotId());
+
+            pst.setString(4, section.getCourseId());
+
+            pst.setString(5, section.getSecId());
+
+            pst.setString(6, section.getSemester());
+
+            pst.setInt(7, section.getYear());
+
+            return pst.executeUpdate() > 0;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean deleteSection(
+            String courseId,
+            String secId,
+            String semester,
+            int year
+    ) {
+
+        String sql =
+                """
+                DELETE FROM section
+                WHERE
+                    course_id = ?
+                    AND sec_id = ?
+                    AND semester = ?
+                    AND year = ?
+                """;
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql)
+
+        ) {
+
+            pst.setString(1, courseId);
+
+            pst.setString(2, secId);
+
+            pst.setString(3, semester);
+
+            pst.setInt(4, year);
+
+            return pst.executeUpdate() > 0;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }
