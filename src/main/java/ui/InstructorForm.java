@@ -20,11 +20,15 @@ public class InstructorForm extends JFrame {
     private JTable table;
     private DefaultTableModel tableModel;
 
+    private JButton updateButton;
+
+    private JButton deleteButton;
+
     public InstructorForm() {
 
         setTitle("Instructor Management");
 
-        setSize(900,600);
+        setSize(900, 600);
 
         setLocationRelativeTo(null);
 
@@ -39,7 +43,7 @@ public class InstructorForm extends JFrame {
 
         JPanel panel =
                 new JPanel(
-                        new GridLayout(5,2)
+                        new GridLayout(5, 2)
                 );
 
         idField = new JTextField();
@@ -65,10 +69,19 @@ public class InstructorForm extends JFrame {
         loadButton =
                 new JButton("Load");
 
+        updateButton =
+                new JButton("Update");
+
+        deleteButton =
+                new JButton("Delete");
+
         panel.add(addButton);
         panel.add(loadButton);
 
-        add(panel,BorderLayout.NORTH);
+        panel.add(updateButton);
+        panel.add(deleteButton);
+
+        add(panel, BorderLayout.NORTH);
 
         tableModel =
                 new DefaultTableModel(
@@ -96,6 +109,14 @@ public class InstructorForm extends JFrame {
         loadButton.addActionListener(
                 e -> loadInstructors()
         );
+
+        updateButton.addActionListener(
+                e -> updateInstructor()
+        );
+
+        deleteButton.addActionListener(
+                e -> deleteInstructor()
+        );
     }
 
     private void addInstructor() {
@@ -114,7 +135,7 @@ public class InstructorForm extends JFrame {
                 new InstructorDAO()
                         .addInstructor(instructor);
 
-        if(result){
+        if (result) {
 
             loadInstructors();
         }
@@ -124,7 +145,7 @@ public class InstructorForm extends JFrame {
 
         tableModel.setRowCount(0);
 
-        for(Instructor instructor :
+        for (Instructor instructor :
                 new InstructorDAO()
                         .getAllInstructors()) {
 
@@ -136,6 +157,73 @@ public class InstructorForm extends JFrame {
                             instructor.getSalary()
                     }
             );
+        }
+    }
+
+    private void updateInstructor() {
+
+        Instructor instructor =
+                new Instructor(
+
+                        Integer.parseInt(
+                                idField.getText()
+                        ),
+
+                        nameField.getText(),
+
+                        deptField.getText(),
+
+                        Double.parseDouble(
+                                salaryField.getText()
+                        )
+                );
+
+        boolean result =
+
+                new InstructorDAO()
+                        .updateInstructor(
+                                instructor
+                        );
+
+        if (result) {
+
+            loadInstructors();
+        }
+    }
+
+    private void deleteInstructor() {
+
+        int id =
+                Integer.parseInt(
+                        idField.getText()
+                );
+
+        int choice =
+
+                JOptionPane.showConfirmDialog(
+
+                        this,
+
+                        "Delete Instructor?",
+
+                        "Confirm",
+
+                        JOptionPane.YES_NO_OPTION
+                );
+
+        if (choice != JOptionPane.YES_OPTION) {
+
+            return;
+        }
+
+        boolean result =
+
+                new InstructorDAO()
+                        .deleteInstructor(id);
+
+        if (result) {
+
+            loadInstructors();
         }
     }
 }

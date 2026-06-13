@@ -92,4 +92,87 @@ public class InstructorDAO {
 
         return false;
     }
+
+    public boolean updateInstructor(
+            Instructor instructor
+    ) {
+
+        String sql =
+                """
+                UPDATE instructor
+                SET
+                    name = ?,
+                    dept_name = ?,
+                    salary = ?
+                WHERE id = ?
+                """;
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql)
+
+        ) {
+
+            pst.setString(
+                    1,
+                    instructor.getName()
+            );
+
+            pst.setString(
+                    2,
+                    instructor.getDeptName()
+            );
+
+            pst.setDouble(
+                    3,
+                    instructor.getSalary()
+            );
+
+            pst.setInt(
+                    4,
+                    instructor.getId()
+            );
+
+            return pst.executeUpdate() > 0;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean deleteInstructor(
+            int id
+    ) {
+
+        String sql =
+                "DELETE FROM instructor WHERE id = ?";
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql)
+
+        ) {
+
+            pst.setInt(1, id);
+
+            return pst.executeUpdate() > 0;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }
