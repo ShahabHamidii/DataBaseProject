@@ -17,6 +17,10 @@ public class ReportForm extends JFrame {
 
     private JButton departmentStatsButton;
 
+    private JButton teachingReportButton;
+
+    private JButton enrollmentStatsButton;
+
     public ReportForm() {
 
         setTitle("Enrollment Reports");
@@ -39,7 +43,25 @@ public class ReportForm extends JFrame {
                         "Load Reports"
                 );
 
-        add(loadButton, BorderLayout.NORTH);
+        teachingReportButton =
+                new JButton(
+                        "Teaching Report"
+                );
+
+        enrollmentStatsButton =
+                new JButton(
+                        "Course Enrollment Stats"
+                );
+
+        JPanel buttonPanel = new JPanel();
+
+        buttonPanel.add(loadButton);
+
+        buttonPanel.add(teachingReportButton);
+
+        buttonPanel.add(enrollmentStatsButton);
+
+        add(buttonPanel, BorderLayout.NORTH);
 
         departmentStatsButton =
                 new JButton(
@@ -82,6 +104,14 @@ public class ReportForm extends JFrame {
         departmentStatsButton.addActionListener(
                 e -> loadDepartmentStats()
         );
+
+        teachingReportButton.addActionListener(
+                e -> loadTeachingReport()
+        );
+
+        enrollmentStatsButton.addActionListener(
+                e -> loadEnrollmentStats()
+        );
     }
 
     private void loadReports() {
@@ -117,6 +147,54 @@ public class ReportForm extends JFrame {
                 dao.getStudentsPerDepartment();
 
         for (Object[] row : rows) {
+
+            tableModel.addRow(row);
+        }
+    }
+    private void loadTeachingReport() {
+
+        tableModel.setRowCount(0);
+
+        tableModel.setColumnCount(0);
+
+        tableModel.addColumn("Instructor");
+
+        tableModel.addColumn("Course");
+
+        tableModel.addColumn("Semester");
+
+        tableModel.addColumn("Year");
+
+        for (
+
+                Object[] row :
+
+                new ReportDAO()
+                        .getInstructorTeachingReport()
+
+        ) {
+
+            tableModel.addRow(row);
+        }
+    }
+    private void loadEnrollmentStats() {
+
+        tableModel.setRowCount(0);
+
+        tableModel.setColumnCount(0);
+
+        tableModel.addColumn("Course");
+
+        tableModel.addColumn("Enrollments");
+
+        for (
+
+                Object[] row :
+
+                new ReportDAO()
+                        .getCourseEnrollmentReport()
+
+        ) {
 
             tableModel.addRow(row);
         }

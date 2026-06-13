@@ -132,4 +132,118 @@ public class ReportDAO {
 
         return rows;
     }
+    public List<Object[]> getInstructorTeachingReport() {
+
+        List<Object[]> rows =
+                new ArrayList<>();
+
+        String sql =
+                """
+                SELECT
+                    i.name,
+                    c.title,
+                    t.semester,
+                    t.year
+    
+                FROM teaches t
+    
+                JOIN instructor i
+                    ON t.id = i.id
+    
+                JOIN course c
+                    ON t.course_id = c.course_id
+                """;
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql);
+
+                ResultSet rs =
+                        pst.executeQuery()
+
+        ) {
+
+            while (rs.next()) {
+
+                rows.add(
+
+                        new Object[]{
+
+                                rs.getString(1),
+
+                                rs.getString(2),
+
+                                rs.getString(3),
+
+                                rs.getInt(4)
+                        }
+                );
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return rows;
+    }
+    public List<Object[]> getCourseEnrollmentReport() {
+
+        List<Object[]> rows =
+                new ArrayList<>();
+
+        String sql =
+                """
+                SELECT
+                    c.title,
+                    COUNT(*) AS total
+    
+                FROM takes t
+    
+                JOIN course c
+                    ON t.course_id = c.course_id
+    
+                GROUP BY c.title
+    
+                ORDER BY total DESC
+                """;
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql);
+
+                ResultSet rs =
+                        pst.executeQuery()
+
+        ) {
+
+            while (rs.next()) {
+
+                rows.add(
+
+                        new Object[]{
+
+                                rs.getString(1),
+
+                                rs.getInt(2)
+                        }
+                );
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return rows;
+    }
+
 }
