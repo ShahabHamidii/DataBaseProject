@@ -246,4 +246,125 @@ public class ReportDAO {
         return rows;
     }
 
+    public int getStudentCount() {
+
+        String sql =
+                "SELECT COUNT(*) FROM student";
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql);
+
+                ResultSet rs =
+                        pst.executeQuery()
+
+        ) {
+
+            if(rs.next()) {
+
+                return rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public int getCourseCount() {
+
+        String sql =
+                "SELECT COUNT(*) FROM courses";
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql);
+
+                ResultSet rs =
+                        pst.executeQuery()
+
+        ) {
+
+            if(rs.next()) {
+
+                return rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+    public int getInstructorCount() {
+
+        String sql =
+                "SELECT COUNT(*) FROM instructor";
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql);
+
+                ResultSet rs =
+                        pst.executeQuery()
+
+        ) {
+
+            if(rs.next()) {
+
+                return rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+    public int getEnrollmentCount() {
+
+        String sql =
+                "SELECT COUNT(*) FROM takes";
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql);
+
+                ResultSet rs =
+                        pst.executeQuery()
+
+        ) {
+
+            if(rs.next()) {
+
+                return rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
 }

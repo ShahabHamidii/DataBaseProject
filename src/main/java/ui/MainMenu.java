@@ -27,6 +27,8 @@ public class MainMenu extends JFrame {
 
     private JButton sectionButton;
 
+    private JButton chartButton;
+
     public MainMenu() {
 
         setTitle("University DBMS");
@@ -50,7 +52,7 @@ public class MainMenu extends JFrame {
                 new JPanel();
 
         panel.setLayout(
-                new GridLayout(11, 1, 20, 20)
+                new GridLayout(12, 1, 20, 20)
         );
 
         panel.setBorder(
@@ -78,11 +80,6 @@ public class MainMenu extends JFrame {
         reportButton =
                 new JButton(
                         "Reports"
-                );
-
-        exitButton =
-                new JButton(
-                        "Exit"
                 );
 
         instructorButton =
@@ -115,6 +112,18 @@ public class MainMenu extends JFrame {
                         "Section Management"
                 );
 
+        chartButton =
+                new JButton(
+                        "Statistics Charts"
+                );
+
+
+        exitButton =
+                new JButton(
+                        "Exit"
+                );
+
+
         panel.add(enrollmentButton);
 
         panel.add(studentButton);
@@ -136,6 +145,8 @@ public class MainMenu extends JFrame {
         panel.add(teachingButton);
 
         panel.add(sectionButton);
+
+        panel.add(chartButton);
 
         add(panel);
 
@@ -183,6 +194,10 @@ public class MainMenu extends JFrame {
 
         sectionButton.addActionListener(
                 e -> new SectionForm()
+        );
+
+        chartButton.addActionListener(
+                e -> new DashboardChartForm()
         );
     }
 }
