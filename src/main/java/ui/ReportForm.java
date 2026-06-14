@@ -1,7 +1,7 @@
 package ui;
 
 import dao.ReportDAO;
-
+import util.CSVExporter;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -20,6 +20,8 @@ public class ReportForm extends JFrame {
     private JButton teachingReportButton;
 
     private JButton enrollmentStatsButton;
+
+    private JButton exportButton;
 
     public ReportForm() {
 
@@ -53,6 +55,11 @@ public class ReportForm extends JFrame {
                         "Course Enrollment Stats"
                 );
 
+        exportButton =
+                new JButton(
+                        "Export CSV"
+                );
+
         JPanel buttonPanel = new JPanel();
 
         buttonPanel.add(loadButton);
@@ -60,6 +67,8 @@ public class ReportForm extends JFrame {
         buttonPanel.add(teachingReportButton);
 
         buttonPanel.add(enrollmentStatsButton);
+
+        buttonPanel.add(exportButton);
 
         add(buttonPanel, BorderLayout.NORTH);
 
@@ -111,6 +120,10 @@ public class ReportForm extends JFrame {
 
         enrollmentStatsButton.addActionListener(
                 e -> loadEnrollmentStats()
+        );
+
+        exportButton.addActionListener(
+                e -> exportReport()
         );
     }
 
@@ -198,5 +211,41 @@ public class ReportForm extends JFrame {
 
             tableModel.addRow(row);
         }
+    }
+
+    private void exportReport() {
+
+        JFileChooser chooser =
+                new JFileChooser();
+
+        int result =
+                chooser.showSaveDialog(this);
+
+        if(result != JFileChooser.APPROVE_OPTION) {
+
+            return;
+        }
+
+        String path =
+                chooser
+                        .getSelectedFile()
+                        .getAbsolutePath();
+
+        if(!path.endsWith(".csv")) {
+
+            path += ".csv";
+        }
+
+        CSVExporter.exportTable(
+                table,
+                path
+        );
+
+        JOptionPane.showMessageDialog(
+
+                this,
+
+                "CSV exported successfully."
+        );
     }
 }

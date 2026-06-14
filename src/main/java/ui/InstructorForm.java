@@ -44,7 +44,7 @@ public class InstructorForm extends JFrame {
 
         JPanel panel =
                 new JPanel(
-                        new GridLayout(0, 2, 10, 10)
+                        new GridLayout(8, 2, 10, 10)
                 );
 
         idField = new JTextField();

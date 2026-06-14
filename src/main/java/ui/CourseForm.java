@@ -55,7 +55,7 @@ public class CourseForm extends JFrame {
 
         JPanel formPanel =
                 new JPanel(
-                        new GridLayout(9, 2, 10, 10)
+                        new GridLayout(8, 2, 10, 10)
                 );
 
         formPanel.setBorder(
