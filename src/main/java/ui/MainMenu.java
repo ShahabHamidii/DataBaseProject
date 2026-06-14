@@ -2,6 +2,7 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
+import com.formdev.flatlaf.FlatDarkLaf;
 
 public class MainMenu extends JFrame {
 
@@ -198,6 +199,22 @@ public class MainMenu extends JFrame {
 
         chartButton.addActionListener(
                 e -> new DashboardChartForm()
+        );
+    }
+
+    public static void main(String[] args) {
+
+        try {
+
+            FlatDarkLaf.setup();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        SwingUtilities.invokeLater(
+                MainMenu::new
         );
     }
 }

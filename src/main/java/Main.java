@@ -1,9 +1,8 @@
-import ui.MainMenu;
+import ui.MainFrame;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        new MainMenu();
-    }
+        new MainFrame();    }
 }

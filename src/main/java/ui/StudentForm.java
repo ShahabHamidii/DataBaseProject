@@ -2,7 +2,7 @@ package ui;
 
 import dao.StudentDAO;
 import model.Student;
-
+import util.UIUtil;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import javax.swing.*;
@@ -115,6 +115,16 @@ public class StudentForm extends JFrame {
 
         formPanel.add(loadButton);
 
+        UIUtil.styleButton(addButton);
+
+        UIUtil.styleButton(updateButton);
+
+        UIUtil.styleButton(deleteButton);
+
+        UIUtil.styleButton(loadButton);
+
+        UIUtil.styleButton(searchButton);
+
         // Table
         String[] columns = {
                 "ID",
@@ -128,6 +138,13 @@ public class StudentForm extends JFrame {
 
         table =
                 new JTable(tableModel);
+
+        table.setRowHeight(30);
+
+        table.setAutoCreateRowSorter(true);
+
+        table.getTableHeader()
+                .setReorderingAllowed(false);
 
         JScrollPane scrollPane =
                 new JScrollPane(table);

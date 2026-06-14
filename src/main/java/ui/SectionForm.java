@@ -115,6 +115,13 @@ public class SectionForm extends JFrame {
 
         table =
                 new JTable(tableModel);
+        
+        table.setRowHeight(30);
+
+        table.setAutoCreateRowSorter(true);
+
+        table.getTableHeader()
+                .setReorderingAllowed(false);
 
         add(
                 new JScrollPane(table),
