@@ -22,6 +22,7 @@ public class StudentForm extends JFrame {
     private JButton deleteButton;
     private DefaultTableModel tableModel;
     private JTextField searchField;
+    private JComboBox<String> searchTypeCombo;
 
     private JButton searchButton;
     private JButton loadButton;
@@ -48,7 +49,7 @@ public class StudentForm extends JFrame {
 
         JPanel formPanel =
                 new JPanel(
-                        new GridLayout(9, 2, 10, 10)
+                        new GridLayout(0, 2, 10, 10)
                 );
 
         formPanel.setBorder(
@@ -80,10 +81,13 @@ public class StudentForm extends JFrame {
         formPanel.add(creditField);
 
 
-        formPanel.add(new JLabel("Search By Department:"));
-        searchField =
-                new JTextField();
+        formPanel.add(new JLabel("Search:"));
+        searchField = new JTextField();
         formPanel.add(searchField);
+
+        formPanel.add(new JLabel("Search Type:"));
+        searchTypeCombo = new JComboBox<>(new String[]{"ID", "Department"});
+        formPanel.add(searchTypeCombo);
 
         addButton =
                 new JButton("Add");
@@ -101,6 +105,7 @@ public class StudentForm extends JFrame {
                 new JButton("Search");
 
         formPanel.add(searchButton);
+        formPanel.add(new JLabel());
 
         formPanel.add(addButton);
 
@@ -149,51 +154,13 @@ public class StudentForm extends JFrame {
                 e -> loadStudents()
         );
         searchButton.addActionListener(
-                e -> searchStudents()
+                e -> searchStudent()
         );
 
         table.getSelectionModel()
                 .addListSelectionListener(
                         e -> fillFormFromTable()
                 );
-        // Table Selection
-        table.getSelectionModel()
-                .addListSelectionListener(e -> {
-
-                    int selectedRow =
-                            table.getSelectedRow();
-
-                    if (selectedRow != -1) {
-
-                        idField.setText(
-                                tableModel.getValueAt(
-                                        selectedRow,
-                                        0
-                                ).toString()
-                        );
-
-                        nameField.setText(
-                                tableModel.getValueAt(
-                                        selectedRow,
-                                        1
-                                ).toString()
-                        );
-
-                        deptField.setText(
-                                tableModel.getValueAt(
-                                        selectedRow,
-                                        2
-                                ).toString()
-                        );
-
-                        creditField.setText(
-                                tableModel.getValueAt(
-                                        selectedRow,
-                                        3
-                                ).toString()
-                        );
-                    }
-                });
     }
 
     private void addStudent() {
@@ -345,8 +312,7 @@ public class StudentForm extends JFrame {
     }
 
     private void updateStudent() {
-        if (
-
+        if(
                 ValidationUtil.isEmpty(
                         idField.getText()
                 )
@@ -382,7 +348,7 @@ public class StudentForm extends JFrame {
             return;
         }
 
-        if (
+        if(
 
                 !ValidationUtil.isInteger(
                         idField.getText()
@@ -438,6 +404,7 @@ public class StudentForm extends JFrame {
                 );
 
                 loadStudents();
+                clearFields();
 
             } else {
 
@@ -479,6 +446,7 @@ public class StudentForm extends JFrame {
                 );
 
                 loadStudents();
+                clearFields();
 
             } else {
 
@@ -508,36 +476,82 @@ public class StudentForm extends JFrame {
         creditField.setText("");
     }
 
-    private void searchStudents() {
+    private void searchStudent() {
 
         tableModel.setRowCount(0);
 
-        String dept =
-                searchField.getText();
+        StudentDAO dao = new StudentDAO();
 
-        StudentDAO dao =
-                new StudentDAO();
+        String searchText = searchField.getText().trim();
 
-        List<Student> students =
-                dao.searchByDepartment(dept);
+        if (searchText.isEmpty()) {
 
-        for (Student student : students) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter a search value"
+            );
 
-            Object[] row = {
+            return;
+        }
 
-                    student.getId(),
+        String searchType = (String) searchTypeCombo.getSelectedItem();
 
-                    student.getName(),
+        if ("ID".equals(searchType)) {
 
-                    student.getDeptName(),
+            if (!ValidationUtil.isInteger(searchText)) {
 
-                    student.getTotalCredits()
-            };
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Please enter a valid student ID"
+                );
 
-            tableModel.addRow(row);
+                return;
+            }
+
+            Student student = dao.getStudentById(
+                    Integer.parseInt(searchText)
+            );
+
+            if (student != null) {
+
+                tableModel.addRow(new Object[]{
+                        student.getId(),
+                        student.getName(),
+                        student.getDeptName(),
+                        student.getTotalCredits()
+                });
+
+            } else {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Student not found"
+                );
+            }
+
+        } else {
+
+            loadStudents();
+
+            for (int i = tableModel.getRowCount() - 1; i >= 0; i--) {
+
+                String dept = tableModel.getValueAt(i, 2)
+                        .toString();
+
+                if (!dept.equalsIgnoreCase(searchText)) {
+                    tableModel.removeRow(i);
+                }
+            }
+
+            if (tableModel.getRowCount() == 0) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No students found in this department"
+                );
+            }
         }
     }
-
     private void fillFormFromTable() {
 
         int row =

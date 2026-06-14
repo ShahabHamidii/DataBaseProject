@@ -175,4 +175,97 @@ public class InstructorDAO {
 
         return false;
     }
+
+    public Instructor getInstructorById(int id) {
+
+        String sql =
+                "SELECT * FROM instructor WHERE id = ?";
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql)
+        ) {
+
+            pst.setInt(1, id);
+
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+
+                return new Instructor(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("dept_name"),
+                        rs.getDouble("salary")
+                );
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public List<Instructor> searchByName(
+            String keyword
+    ) {
+
+        List<Instructor> list =
+                new ArrayList<>();
+
+        String sql =
+                """
+                SELECT *
+                FROM instructor
+                WHERE name LIKE ?
+                """;
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql)
+
+        ) {
+
+            pst.setString(
+                    1,
+                    "%" + keyword + "%"
+            );
+
+            ResultSet rs =
+                    pst.executeQuery();
+
+            while(rs.next()) {
+
+                list.add(
+
+                        new Instructor(
+
+                                rs.getInt("id"),
+
+                                rs.getString("name"),
+
+                                rs.getString("dept_name"),
+
+                                rs.getDouble("salary")
+                        )
+                );
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 }

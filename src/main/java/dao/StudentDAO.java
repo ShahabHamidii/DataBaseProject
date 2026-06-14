@@ -2,7 +2,6 @@ package dao;
 
 import database.DBConnection;
 import model.Student;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.ResultSet;
@@ -143,7 +142,6 @@ public class StudentDAO {
 
         return false;
     }
-
     public boolean deleteStudent(int id) {
 
         String sql =
@@ -169,7 +167,6 @@ public class StudentDAO {
 
         return false;
     }
-
     public List<Student> searchByDepartment(
             String deptName
     ) {

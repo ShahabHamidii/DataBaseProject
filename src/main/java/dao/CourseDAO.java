@@ -194,4 +194,61 @@ public class CourseDAO {
 
         return courses;
     }
+
+    public List<Course> searchByTitle(
+            String keyword
+    ) {
+
+        List<Course> list =
+                new ArrayList<>();
+
+        String sql =
+                """
+                SELECT *
+                FROM course
+                WHERE title LIKE ?
+                """;
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql)
+
+        ) {
+
+            pst.setString(
+                    1,
+                    "%" + keyword + "%"
+            );
+
+            ResultSet rs =
+                    pst.executeQuery();
+
+            while(rs.next()) {
+
+                list.add(
+
+                        new Course(
+
+                                rs.getString("course_id"),
+
+                                rs.getString("title"),
+
+                                rs.getString("dept_name"),
+
+                                rs.getInt("credits")
+                        )
+                );
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 }

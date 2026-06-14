@@ -15,17 +15,15 @@ public class InstructorForm extends JFrame {
     private JTextField nameField;
     private JTextField deptField;
     private JTextField salaryField;
-
     private JButton addButton;
     private JButton loadButton;
-
     private JTable table;
     private DefaultTableModel tableModel;
-
     private JButton updateButton;
-
     private JButton deleteButton;
+    private JTextField searchField;
 
+    private JButton searchButton;
     public InstructorForm() {
 
         setTitle("Instructor Management");
@@ -35,6 +33,7 @@ public class InstructorForm extends JFrame {
         setLocationRelativeTo(null);
 
         initComponents();
+        loadInstructors();
 
         setVisible(true);
     }
@@ -45,13 +44,16 @@ public class InstructorForm extends JFrame {
 
         JPanel panel =
                 new JPanel(
-                        new GridLayout(5, 2)
+                        new GridLayout(0, 2, 10, 10)
                 );
 
         idField = new JTextField();
         nameField = new JTextField();
         deptField = new JTextField();
         salaryField = new JTextField();
+        searchField =
+                new JTextField();
+
 
         panel.add(new JLabel("ID"));
         panel.add(idField);
@@ -65,6 +67,9 @@ public class InstructorForm extends JFrame {
         panel.add(new JLabel("Salary"));
         panel.add(salaryField);
 
+        panel.add(new JLabel("Search By ID"));
+        panel.add(searchField);
+
         addButton =
                 new JButton("Add");
 
@@ -77,11 +82,20 @@ public class InstructorForm extends JFrame {
         deleteButton =
                 new JButton("Delete");
 
+        searchButton =
+                new JButton("Search");
+        searchButton.addActionListener(
+                e -> searchInstructor()
+        );
+
         panel.add(addButton);
         panel.add(loadButton);
 
         panel.add(updateButton);
         panel.add(deleteButton);
+
+        panel.add(searchButton);
+        panel.add(new JLabel());
 
         add(panel, BorderLayout.NORTH);
 
@@ -354,6 +368,48 @@ public class InstructorForm extends JFrame {
         if (result) {
 
             loadInstructors();
+        }
+    }
+
+    private void searchInstructor() {
+
+        if (!ValidationUtil.isInteger(searchField.getText())) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter a valid instructor ID"
+            );
+
+            return;
+        }
+
+        Instructor instructor =
+                new InstructorDAO()
+                        .getInstructorById(
+                                Integer.parseInt(
+                                        searchField.getText()
+                                )
+                        );
+
+        tableModel.setRowCount(0);
+
+        if (instructor != null) {
+
+            tableModel.addRow(
+                    new Object[]{
+                            instructor.getId(),
+                            instructor.getName(),
+                            instructor.getDeptName(),
+                            instructor.getSalary()
+                    }
+            );
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Instructor not found"
+            );
         }
     }
 
