@@ -7,6 +7,7 @@ import model.Instructor;
 import model.Student;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class AdvisorForm extends JFrame {
@@ -16,6 +17,14 @@ public class AdvisorForm extends JFrame {
     private JComboBox<Instructor> instructorCombo;
 
     private JButton assignButton;
+
+    private JTable table;
+
+    private javax.swing.table.DefaultTableModel tableModel;
+
+    private JButton loadButton;
+
+    private JButton deleteButton;
 
     public AdvisorForm() {
 
@@ -29,15 +38,31 @@ public class AdvisorForm extends JFrame {
 
         loadData();
 
+        loadAssignments();
+
         setVisible(true);
     }
-
     private void initComponents() {
 
         JPanel panel =
                 new JPanel(
                         new GridLayout(3,2,10,10)
                 );
+
+        tableModel =
+                new DefaultTableModel(
+                        new String[]{
+                                "Student ID",
+                                "Student",
+                                "Advisor"
+                        },
+                        0
+                );
+
+        table =
+                new JTable(tableModel);
+
+        add(new JScrollPane(table), BorderLayout.CENTER);
 
         panel.add(
                 new JLabel("Student")
@@ -62,12 +87,34 @@ public class AdvisorForm extends JFrame {
                         "Assign Advisor"
                 );
 
+        loadButton =
+                new JButton(
+                        "Load Assignments"
+                );
+
+        deleteButton =
+                new JButton(
+                        "Delete Assignment"
+                );
+
+        panel.add(loadButton);
+
+        panel.add(deleteButton);
+
         panel.add(assignButton);
 
         add(panel);
 
         assignButton.addActionListener(
                 e -> assignAdvisor()
+        );
+
+        loadButton.addActionListener(
+                e -> loadAssignments()
+        );
+
+        deleteButton.addActionListener(
+                e -> deleteAssignment()
         );
     }
 
@@ -101,7 +148,16 @@ public class AdvisorForm extends JFrame {
         Instructor instructor =
                 (Instructor)
                         instructorCombo.getSelectedItem();
+        AdvisorDAO dao =
+                new AdvisorDAO();
 
+        if(dao.advisorExists(student.getId())){
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Student already has an advisor."
+            );
+            return;
+        }
         boolean result =
                 new AdvisorDAO()
                         .assignAdvisor(
@@ -115,6 +171,51 @@ public class AdvisorForm extends JFrame {
                     this,
                     "Advisor Assigned"
             );
+        }
+    }
+
+    private void loadAssignments() {
+
+        tableModel.setRowCount(0);
+
+        for(
+
+                Object[] row :
+
+                new AdvisorDAO()
+                        .getAllAssignments()
+
+        ){
+
+            tableModel.addRow(row);
+        }
+    }
+
+    private void deleteAssignment() {
+
+        int row =
+                table.getSelectedRow();
+
+        if(row == -1){
+
+            return;
+        }
+
+        int studentId =
+                Integer.parseInt(
+                        tableModel.getValueAt(
+                                row,
+                                0
+                        ).toString()
+                );
+
+        boolean deleted =
+                new AdvisorDAO()
+                        .deleteAdvisor(studentId);
+
+        if(deleted){
+
+            loadAssignments();
         }
     }
 }

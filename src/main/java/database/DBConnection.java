@@ -13,6 +13,7 @@ public class DBConnection {
     private static final String PASSWORD = "shah1383";
 
     public static Connection getConnection() throws SQLException {
+        System.out.println("Connecting to DB...");
 
         return DriverManager.getConnection(
                 URL,
@@ -20,4 +21,5 @@ public class DBConnection {
                 PASSWORD
         );
     }
+
 }
