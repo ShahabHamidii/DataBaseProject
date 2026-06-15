@@ -29,6 +29,10 @@ public class SectionForm extends JFrame {
     private JButton updateButton;
     private JButton deleteButton;
 
+    private JTextField searchField;
+
+    private JButton searchButton;
+
     public SectionForm() {
 
         setTitle("Section Management");
@@ -39,6 +43,8 @@ public class SectionForm extends JFrame {
 
         initComponents();
 
+        loadSections();
+
         setVisible(true);
     }
 
@@ -48,7 +54,7 @@ public class SectionForm extends JFrame {
 
         JPanel panel =
                 new JPanel(
-                        new GridLayout(8, 2)
+                        new GridLayout(10, 2)
                 );
 
         courseIdField = new JTextField();
@@ -92,10 +98,18 @@ public class SectionForm extends JFrame {
         deleteButton =
                 new JButton("Delete");
 
+        searchButton =
+                new JButton("Search");
+
+        searchField =
+                new JTextField();
+
         panel.add(addButton);
         panel.add(loadButton);
         panel.add(updateButton);
         panel.add(deleteButton);
+        panel.add(searchButton);
+        panel.add(searchField);
 
         add(panel, BorderLayout.NORTH);
 
@@ -148,6 +162,10 @@ public class SectionForm extends JFrame {
                 .addListSelectionListener(
                         e -> fillFormFromTable()
                 );
+        searchButton.addActionListener(
+                e -> searchSections()
+        );
+
     }
 
     private void addSection() {
@@ -223,10 +241,30 @@ public class SectionForm extends JFrame {
         boolean result =
                 new SectionDAO()
                         .addSection(section);
+        SectionDAO dao =
+                new SectionDAO();
+
+        if(
+                dao.exists(
+                        courseIdField.getText(),
+                        secIdField.getText(),
+                        semesterField.getText(),
+                        Integer.parseInt(
+                                yearField.getText()
+                        )
+                )
+        ){
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Section already exists"
+            );
+            return;
+        }
 
         if (result) {
 
             loadSections();
+            clearFields();
         }
     }
 
@@ -341,6 +379,7 @@ public class SectionForm extends JFrame {
         if (result) {
 
             loadSections();
+            clearFields();
         }
     }
 
@@ -368,6 +407,47 @@ public class SectionForm extends JFrame {
         if (result) {
 
             loadSections();
+            clearFields();
         }
+    }
+
+    private void searchSections() {
+
+        tableModel.setRowCount(0);
+
+        for (
+
+                Section section :
+
+                new SectionDAO()
+                        .searchSections(
+                                searchField.getText()
+                        )
+
+        ) {
+
+            tableModel.addRow(
+                    new Object[]{
+                            section.getCourseId(),
+                            section.getSecId(),
+                            section.getSemester(),
+                            section.getYear(),
+                            section.getBuilding(),
+                            section.getRoomNumber(),
+                            section.getTimeSlotId()
+                    }
+            );
+        }
+    }
+
+    private void clearFields() {
+
+        courseIdField.setText("");
+        secIdField.setText("");
+        semesterField.setText("");
+        yearField.setText("");
+        buildingField.setText("");
+        roomField.setText("");
+        timeSlotField.setText("");
     }
 }

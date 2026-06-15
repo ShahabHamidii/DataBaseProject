@@ -188,4 +188,98 @@ public class SectionDAO {
 
         return false;
     }
+
+    public boolean exists(
+            String courseId,
+            String secId,
+            String semester,
+            int year
+    ) {
+
+        String sql =
+                """
+                SELECT *
+                FROM section
+                WHERE course_id = ?
+                AND sec_id = ?
+                AND semester = ?
+                AND year = ?
+                """;
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql)
+
+        ) {
+
+            pst.setString(1, courseId);
+            pst.setString(2, secId);
+            pst.setString(3, semester);
+            pst.setInt(4, year);
+
+            return pst.executeQuery().next();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public List<Section> searchSections(
+            String courseId
+    ) {
+
+        List<Section> sections =
+                new ArrayList<>();
+
+        String sql =
+                """
+                SELECT *
+                FROM section
+                WHERE course_id = ?
+                """;
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql)
+
+        ) {
+
+            pst.setString(1, courseId);
+
+            ResultSet rs =
+                    pst.executeQuery();
+
+            while (rs.next()) {
+
+                sections.add(
+                        new Section(
+                                rs.getString("course_id"),
+                                rs.getString("sec_id"),
+                                rs.getString("semester"),
+                                rs.getInt("year"),
+                                rs.getString("building"),
+                                rs.getString("room_number"),
+                                rs.getString("time_slot_id")
+                        )
+                );
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return sections;
+    }
 }
