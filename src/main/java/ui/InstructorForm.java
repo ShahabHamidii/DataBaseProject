@@ -344,6 +344,18 @@ public class InstructorForm extends JFrame {
 
     private void deleteInstructor() {
 
+        if(
+                !ValidationUtil.isInteger(
+                        idField.getText()
+                )
+        ){
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Select an instructor first."
+            );
+            return;
+        }
+
         int id =
                 Integer.parseInt(
                         idField.getText()
