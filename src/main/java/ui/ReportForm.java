@@ -25,6 +25,8 @@ public class ReportForm extends JFrame {
 
     private JButton topStudentsButton;
 
+    private JButton advisorReportButton;
+
     public ReportForm() {
 
         setTitle("Enrollment Reports");
@@ -67,6 +69,11 @@ public class ReportForm extends JFrame {
                         "Top Students"
                 );
 
+        advisorReportButton =
+                new JButton(
+                        "Advisor Report"
+                );
+
 
         JPanel buttonPanel = new JPanel();
 
@@ -79,6 +86,8 @@ public class ReportForm extends JFrame {
         buttonPanel.add(exportButton);
 
         buttonPanel.add(topStudentsButton);
+
+        buttonPanel.add(advisorReportButton);
 
         add(buttonPanel, BorderLayout.NORTH);
 
@@ -145,6 +154,10 @@ public class ReportForm extends JFrame {
 
         topStudentsButton.addActionListener(
                 e -> loadTopStudents()
+        );
+
+        advisorReportButton.addActionListener(
+                e -> loadAdvisorReport()
         );
     }
 
@@ -289,6 +302,31 @@ public class ReportForm extends JFrame {
 
                 new ReportDAO()
                         .getTopStudentsByCredits()
+
+        ){
+
+            tableModel.addRow(row);
+        }
+    }
+
+    private void loadAdvisorReport() {
+
+        tableModel.setRowCount(0);
+
+        tableModel.setColumnCount(0);
+
+        tableModel.addColumn("Student");
+
+        tableModel.addColumn("Advisor");
+
+        tableModel.addColumn("Department");
+
+        for(
+
+                Object[] row :
+
+                new ReportDAO()
+                        .getAdvisorAssignments()
 
         ){
 

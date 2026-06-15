@@ -415,4 +415,59 @@ public class ReportDAO {
 
         return rows;
     }
+    public List<Object[]> getAdvisorAssignments() {
+
+        List<Object[]> rows =
+                new ArrayList<>();
+
+        String sql =
+                """
+                SELECT
+                    s.name,
+                    i.name,
+                    s.dept_name
+    
+                FROM advisor a
+    
+                JOIN student s
+                    ON a.s_id = s.id
+    
+                JOIN instructor i
+                    ON a.i_id = i.id
+                """;
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql);
+
+                ResultSet rs =
+                        pst.executeQuery()
+
+        ) {
+
+            while(rs.next()) {
+
+                rows.add(
+                        new Object[]{
+
+                                rs.getString(1),
+
+                                rs.getString(2),
+
+                                rs.getString(3)
+                        }
+                );
+            }
+
+        } catch(Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return rows;
+    }
 }
