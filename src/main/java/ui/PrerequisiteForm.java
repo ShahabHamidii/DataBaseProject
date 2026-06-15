@@ -23,6 +23,12 @@ public class PrerequisiteForm extends JFrame {
 
     private DefaultTableModel tableModel;
 
+    private JButton deleteButton;
+
+    private JButton searchButton;
+
+    private JTextField searchField;
+
     public PrerequisiteForm() {
 
         setTitle("Prerequisite Management");
@@ -34,6 +40,8 @@ public class PrerequisiteForm extends JFrame {
         initComponents();
 
         loadCourses();
+
+        loadPrerequisites();
 
         setVisible(true);
     }
@@ -59,6 +67,15 @@ public class PrerequisiteForm extends JFrame {
         loadButton =
                 new JButton("Load");
 
+        deleteButton =
+                new JButton("Delete");
+
+        searchButton =
+                new JButton("Search");
+
+        searchField =
+                new JTextField();
+
         panel.add(
                 new JLabel("Course")
         );
@@ -80,8 +97,30 @@ public class PrerequisiteForm extends JFrame {
 
         buttonPanel.add(addButton);
         buttonPanel.add(loadButton);
+        buttonPanel.add(deleteButton);
 
         panel.add(buttonPanel);
+
+        JPanel searchPanel =
+                new JPanel(
+                        new BorderLayout()
+                );
+
+        searchPanel.add(
+                new JLabel("Course ID"),
+                BorderLayout.WEST
+        );
+
+        searchPanel.add(
+                searchField,
+                BorderLayout.CENTER
+        );
+        searchPanel.add(
+                searchButton,
+                BorderLayout.EAST
+        );
+
+        add(searchPanel, BorderLayout.SOUTH);
 
         add(panel, BorderLayout.NORTH);
 
@@ -109,6 +148,14 @@ public class PrerequisiteForm extends JFrame {
         loadButton.addActionListener(
                 e -> loadPrerequisites()
         );
+
+        deleteButton.addActionListener(
+                e -> deletePrerequisite()
+        );
+
+        searchButton.addActionListener(
+                e -> searchPrerequisite()
+        );
     }
 
     private void loadCourses() {
@@ -133,7 +180,21 @@ public class PrerequisiteForm extends JFrame {
         Course prereq =
                 (Course)
                         prereqCombo.getSelectedItem();
+        PrerequisiteDAO dao =
+                new PrerequisiteDAO();
 
+        if(
+                dao.exists(
+                        course.getCourseId(),
+                        prereq.getCourseId()
+                )
+        ){
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Already exists"
+            );
+            return;
+        }
         boolean result =
                 new PrerequisiteDAO()
                         .addPrerequisite(
@@ -166,6 +227,63 @@ public class PrerequisiteForm extends JFrame {
                     new Object[]{
                             prerequisite.getCourseId(),
                             prerequisite.getPrereqId()
+                    }
+            );
+        }
+    }
+    private void deletePrerequisite() {
+
+        int row =
+                table.getSelectedRow();
+
+        if(row == -1){
+
+            return;
+        }
+
+        String courseId =
+                tableModel.getValueAt(
+                        row,
+                        0
+                ).toString();
+
+        String prereqId =
+                tableModel.getValueAt(
+                        row,
+                        1
+                ).toString();
+
+        boolean deleted =
+                new PrerequisiteDAO()
+                        .deletePrerequisite(
+                                courseId,
+                                prereqId
+                        );
+
+        if(deleted){
+
+            loadPrerequisites();
+        }
+    }
+    private void searchPrerequisite() {
+
+        tableModel.setRowCount(0);
+
+        for(
+
+                Prerequisite p :
+
+                new PrerequisiteDAO()
+                        .searchByCourse(
+                                searchField.getText()
+                        )
+
+        ){
+
+            tableModel.addRow(
+                    new Object[]{
+                            p.getCourseId(),
+                            p.getPrereqId()
                     }
             );
         }
