@@ -23,6 +23,8 @@ public class ReportForm extends JFrame {
 
     private JButton exportButton;
 
+    private JButton topStudentsButton;
+
     public ReportForm() {
 
         setTitle("Enrollment Reports");
@@ -60,6 +62,12 @@ public class ReportForm extends JFrame {
                         "Export CSV"
                 );
 
+        topStudentsButton =
+                new JButton(
+                        "Top Students"
+                );
+
+
         JPanel buttonPanel = new JPanel();
 
         buttonPanel.add(loadButton);
@@ -69,6 +77,8 @@ public class ReportForm extends JFrame {
         buttonPanel.add(enrollmentStatsButton);
 
         buttonPanel.add(exportButton);
+
+        buttonPanel.add(topStudentsButton);
 
         add(buttonPanel, BorderLayout.NORTH);
 
@@ -131,6 +141,10 @@ public class ReportForm extends JFrame {
 
         exportButton.addActionListener(
                 e -> exportReport()
+        );
+
+        topStudentsButton.addActionListener(
+                e -> loadTopStudents()
         );
     }
 
@@ -254,5 +268,31 @@ public class ReportForm extends JFrame {
 
                 "CSV exported successfully."
         );
+    }
+    private void loadTopStudents() {
+
+        tableModel.setRowCount(0);
+
+        tableModel.setColumnCount(0);
+
+        tableModel.addColumn("ID");
+
+        tableModel.addColumn("Name");
+
+        tableModel.addColumn("Department");
+
+        tableModel.addColumn("Credits");
+
+        for(
+
+                Object[] row :
+
+                new ReportDAO()
+                        .getTopStudentsByCredits()
+
+        ){
+
+            tableModel.addRow(row);
+        }
     }
 }

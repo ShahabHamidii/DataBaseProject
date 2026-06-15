@@ -280,7 +280,7 @@ public class ReportDAO {
     public int getCourseCount() {
 
         String sql =
-                "SELECT COUNT(*) FROM courses";
+                "SELECT COUNT(*) FROM course";
 
         try (
 
@@ -366,5 +366,53 @@ public class ReportDAO {
         }
 
         return 0;
+    }
+
+    public List<Object[]> getTopStudentsByCredits() {
+
+        List<Object[]> rows =
+                new ArrayList<>();
+
+        String sql =
+                """
+                SELECT
+                    id,
+                    name,
+                    dept_name,
+                    tot_cred
+                FROM student
+                ORDER BY tot_cred DESC
+                LIMIT 10
+                """;
+
+        try(
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql);
+
+                ResultSet rs =
+                        pst.executeQuery()
+        ){
+
+            while(rs.next()){
+
+                rows.add(
+                        new Object[]{
+                                rs.getInt(1),
+                                rs.getString(2),
+                                rs.getString(3),
+                                rs.getInt(4)
+                        }
+                );
+            }
+
+        }catch(Exception e){
+
+            e.printStackTrace();
+        }
+
+        return rows;
     }
 }
