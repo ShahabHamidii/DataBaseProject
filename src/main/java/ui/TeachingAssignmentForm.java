@@ -31,17 +31,25 @@ public class TeachingAssignmentForm extends JFrame {
 
     private DefaultTableModel tableModel;
 
+    private JButton deleteButton;
+
+    private JTextField searchField;
+
+    private JButton searchButton;
+
     public TeachingAssignmentForm() {
 
         setTitle("Teaching Assignments");
 
-        setSize(900,600);
+        setSize(900, 600);
 
         setLocationRelativeTo(null);
 
         initComponents();
 
         loadData();
+
+        loadAssignments();
 
         setVisible(true);
     }
@@ -52,7 +60,7 @@ public class TeachingAssignmentForm extends JFrame {
 
         JPanel panel =
                 new JPanel(
-                        new GridLayout(6,2,10,10)
+                        new GridLayout(8, 2, 10, 10)
                 );
 
         instructorCombo =
@@ -91,10 +99,41 @@ public class TeachingAssignmentForm extends JFrame {
         loadButton =
                 new JButton("Load");
 
+        deleteButton =
+                new JButton("Delete");
+
+        searchButton =
+                new JButton("Search");
+
+        searchField =
+                new JTextField();
+
         panel.add(assignButton);
         panel.add(loadButton);
+        panel.add(deleteButton);
+        panel.add(searchButton);
 
         add(panel, BorderLayout.NORTH);
+
+        JPanel searchPanel =
+                new JPanel(
+                        new BorderLayout()
+                );
+
+        searchPanel.add(
+                new JLabel("Instructor ID"),
+                BorderLayout.WEST
+        );
+
+        searchPanel.add(
+                searchField,
+                BorderLayout.CENTER
+        );
+
+        add(
+                searchPanel,
+                BorderLayout.SOUTH
+        );
 
         tableModel =
                 new DefaultTableModel(
@@ -122,6 +161,14 @@ public class TeachingAssignmentForm extends JFrame {
 
         loadButton.addActionListener(
                 e -> loadAssignments()
+        );
+
+        deleteButton.addActionListener(
+                e -> deleteAssignment()
+        );
+
+        searchButton.addActionListener(
+                e -> searchAssignments()
         );
     }
 
@@ -160,6 +207,27 @@ public class TeachingAssignmentForm extends JFrame {
                 (Course)
                         courseCombo.getSelectedItem();
 
+        TeachingAssignmentDAO dao =
+                new TeachingAssignmentDAO();
+
+        if (
+                dao.exists(
+                        instructor.getId(),
+                        course.getCourseId(),
+                        sectionField.getText(),
+                        semesterField.getText(),
+                        Integer.parseInt(
+                                yearField.getText()
+                        )
+                )
+        ) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Assignment already exists"
+            );
+            return;
+        }
+
         boolean result =
                 new TeachingAssignmentDAO()
                         .assignInstructor(
@@ -172,7 +240,7 @@ public class TeachingAssignmentForm extends JFrame {
                                 )
                         );
 
-        if(result) {
+        if (result) {
 
             loadAssignments();
         }
@@ -197,6 +265,101 @@ public class TeachingAssignmentForm extends JFrame {
                             assignment.getYear()
                     }
             );
+        }
+    }
+
+    private void deleteAssignment() {
+
+        int row =
+                table.getSelectedRow();
+
+        if(row == -1){
+
+            return;
+        }
+
+        boolean deleted =
+                new TeachingAssignmentDAO()
+                        .deleteAssignment(
+
+                                Integer.parseInt(
+                                        tableModel.getValueAt(
+                                                row,
+                                                0
+                                        ).toString()
+                                ),
+
+                                tableModel.getValueAt(
+                                        row,
+                                        1
+                                ).toString(),
+
+                                tableModel.getValueAt(
+                                        row,
+                                        2
+                                ).toString(),
+
+                                tableModel.getValueAt(
+                                        row,
+                                        3
+                                ).toString(),
+
+                                Integer.parseInt(
+                                        tableModel.getValueAt(
+                                                row,
+                                                4
+                                        ).toString()
+                                )
+                        );
+
+        if(deleted){
+
+            loadAssignments();
+        }
+    }
+
+    private void searchAssignments() {
+
+        String instructorId =
+                searchField.getText();
+
+        if(instructorId.isEmpty()) {
+
+            loadAssignments();
+
+            return;
+        }
+
+        tableModel.setRowCount(0);
+
+        for (
+
+                TeachingAssignment assignment :
+
+                new TeachingAssignmentDAO()
+                        .getAllAssignments()
+
+        ) {
+
+            if(
+
+                    String.valueOf(
+                                    assignment.getInstructorId()
+                            )
+                            .equals(instructorId)
+
+            ){
+
+                tableModel.addRow(
+                        new Object[]{
+                                assignment.getInstructorId(),
+                                assignment.getCourseId(),
+                                assignment.getSecId(),
+                                assignment.getSemester(),
+                                assignment.getYear()
+                        }
+                );
+            }
         }
     }
 }

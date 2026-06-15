@@ -84,4 +84,93 @@ public class TeachingAssignmentDAO {
 
         return assignments;
     }
+
+    public boolean deleteAssignment(
+            int instructorId,
+            String courseId,
+            String sectionId,
+            String semester,
+            int year
+    ) {
+
+        String sql =
+                """
+                        DELETE FROM teaches
+                        WHERE id = ?
+                        AND course_id = ?
+                        AND sec_id = ?
+                        AND semester = ?
+                        AND year = ?
+                        """;
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql)
+
+        ) {
+
+            pst.setInt(1, instructorId);
+            pst.setString(2, courseId);
+            pst.setString(3, sectionId);
+            pst.setString(4, semester);
+            pst.setInt(5, year);
+
+            return pst.executeUpdate() > 0;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean exists(
+            int instructorId,
+            String courseId,
+            String sectionId,
+            String semester,
+            int year
+    ) {
+
+        String sql =
+                """
+                        SELECT *
+                        FROM teaches
+                        WHERE id = ?
+                        AND course_id = ?
+                        AND sec_id = ?
+                        AND semester = ?
+                        AND year = ?
+                        """;
+
+        try (
+
+                Connection con =
+                        DBConnection.getConnection();
+
+                PreparedStatement pst =
+                        con.prepareStatement(sql)
+
+        ) {
+
+            pst.setInt(1, instructorId);
+            pst.setString(2, courseId);
+            pst.setString(3, sectionId);
+            pst.setString(4, semester);
+            pst.setInt(5, year);
+
+            return pst.executeQuery().next();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }
