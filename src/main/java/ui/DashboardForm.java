@@ -7,18 +7,21 @@ import java.awt.*;
 
 public class DashboardForm extends JFrame {
 
-    private JLabel studentLabel;
-    private JLabel courseLabel;
-    private JLabel enrollmentLabel;
-    private JLabel departmentLabel;
+    private JLabel studentValue;
+    private JLabel courseValue;
+    private JLabel instructorValue;
+    private JLabel enrollmentValue;
 
     public DashboardForm() {
 
-        setTitle("Dashboard");
-        setSize(600, 400);
+        setTitle("University Dashboard");
+
+        setSize(900,600);
+
         setLocationRelativeTo(null);
 
         initComponents();
+
         loadStatistics();
 
         setVisible(true);
@@ -26,32 +29,149 @@ public class DashboardForm extends JFrame {
 
     private void initComponents() {
 
-        JPanel panel = new JPanel(
-                new GridLayout(4, 1, 20, 20)
+        setLayout(new BorderLayout());
+
+        JLabel title =
+                new JLabel(
+                        "University Dashboard"
+                );
+
+        title.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        28
+                )
         );
 
-        studentLabel = new JLabel();
-        courseLabel = new JLabel();
-        enrollmentLabel = new JLabel();
-        departmentLabel = new JLabel();
-
-        Font font = new Font(
-                "Arial",
-                Font.BOLD,
-                22
+        title.setHorizontalAlignment(
+                SwingConstants.CENTER
         );
 
-        studentLabel.setFont(font);
-        courseLabel.setFont(font);
-        enrollmentLabel.setFont(font);
-        departmentLabel.setFont(font);
+        add(
+                title,
+                BorderLayout.NORTH
+        );
 
-        panel.add(studentLabel);
-        panel.add(courseLabel);
-        panel.add(enrollmentLabel);
-        panel.add(departmentLabel);
+        JPanel cards =
+                new JPanel(
+                        new GridLayout(
+                                2,
+                                2,
+                                20,
+                                20
+                        )
+                );
 
-        add(panel);
+        cards.setBorder(
+                BorderFactory.createEmptyBorder(
+                        40,
+                        40,
+                        40,
+                        40
+                )
+        );
+
+        studentValue =
+                new JLabel("0");
+
+        courseValue =
+                new JLabel("0");
+
+        instructorValue =
+                new JLabel("0");
+
+        enrollmentValue =
+                new JLabel("0");
+
+        cards.add(
+                createCard(
+                        "Students",
+                        studentValue
+                )
+        );
+
+        cards.add(
+                createCard(
+                        "Courses",
+                        courseValue
+                )
+        );
+
+        cards.add(
+                createCard(
+                        "Instructors",
+                        instructorValue
+                )
+        );
+
+        cards.add(
+                createCard(
+                        "Enrollments",
+                        enrollmentValue
+                )
+        );
+
+        add(
+                cards,
+                BorderLayout.CENTER
+        );
+    }
+
+    private JPanel createCard(
+            String title,
+            JLabel valueLabel
+    ) {
+
+        JPanel card =
+                new JPanel(
+                        new BorderLayout()
+                );
+
+        card.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(
+                                Color.GRAY
+                        ),
+                        BorderFactory.createEmptyBorder(
+                                20,
+                                20,
+                                20,
+                                20
+                        )
+                )
+        );
+
+        JLabel titleLabel =
+                new JLabel(title);
+
+        titleLabel.setHorizontalAlignment(
+                SwingConstants.CENTER
+        );
+
+        valueLabel.setHorizontalAlignment(
+                SwingConstants.CENTER
+        );
+
+        valueLabel.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        42
+                )
+        );
+
+        card.add(
+                titleLabel,
+                BorderLayout.NORTH
+        );
+
+        card.add(
+                valueLabel,
+                BorderLayout.CENTER
+        );
+
+        return card;
     }
 
     private void loadStatistics() {
@@ -59,24 +179,28 @@ public class DashboardForm extends JFrame {
         StatisticsDAO dao =
                 new StatisticsDAO();
 
-        studentLabel.setText(
-                "Students: " +
+        studentValue.setText(
+                String.valueOf(
                         dao.getStudentCount()
+                )
         );
 
-        courseLabel.setText(
-                "Courses: " +
+        courseValue.setText(
+                String.valueOf(
                         dao.getCourseCount()
+                )
         );
 
-        enrollmentLabel.setText(
-                "Enrollments: " +
-                        dao.getEnrollmentCount()
-        );
-
-        departmentLabel.setText(
-                "Departments: " +
+        instructorValue.setText(
+                String.valueOf(
                         dao.getDepartmentCount()
+                )
+        );
+
+        enrollmentValue.setText(
+                String.valueOf(
+                        dao.getEnrollmentCount()
+                )
         );
     }
 }
