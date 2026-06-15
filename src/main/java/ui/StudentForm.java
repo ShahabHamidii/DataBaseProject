@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.event.ListSelectionEvent;
+import util.UITheme;
 
 import util.ValidationUtil;
 
@@ -32,7 +33,7 @@ public class StudentForm extends JFrame {
 
         setTitle("Student Management");
 
-        setSize(900, 700);
+        setSize(1200, 800);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -45,7 +46,36 @@ public class StudentForm extends JFrame {
 
     private void initComponents() {
 
+        UITheme.styleFrame(this);
+
         setLayout(new BorderLayout());
+
+        JLabel title =
+                new JLabel(
+                        "Student Management"
+                );
+
+        title.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        28
+                )
+        );
+
+        title.setBorder(
+                BorderFactory.createEmptyBorder(
+                        20,
+                        20,
+                        20,
+                        20
+                )
+        );
+
+        add(
+                title,
+                BorderLayout.NORTH
+        );
 
         JPanel formPanel =
                 new JPanel(
@@ -88,6 +118,12 @@ public class StudentForm extends JFrame {
         formPanel.add(new JLabel("Search Type:"));
         searchTypeCombo = new JComboBox<>(new String[]{"ID", "Department"});
         formPanel.add(searchTypeCombo);
+
+        UITheme.styleTextField(idField);
+        UITheme.styleTextField(nameField);
+        UITheme.styleTextField(deptField);
+        UITheme.styleTextField(creditField);
+        UITheme.styleTextField(searchField);
 
         addButton =
                 new JButton("Add");
@@ -139,6 +175,8 @@ public class StudentForm extends JFrame {
         table =
                 new JTable(tableModel);
 
+        UITheme.styleTable(table);
+
         table.setRowHeight(30);
 
         table.setAutoCreateRowSorter(true);
@@ -150,8 +188,25 @@ public class StudentForm extends JFrame {
                 new JScrollPane(table);
 
         // Add to frame
-        add(formPanel, BorderLayout.NORTH);
+        JPanel northPanel =
+                new JPanel(
+                        new BorderLayout()
+                );
 
+        northPanel.add(
+                title,
+                BorderLayout.NORTH
+        );
+
+        northPanel.add(
+                formPanel,
+                BorderLayout.CENTER
+        );
+
+        add(
+                northPanel,
+                BorderLayout.NORTH
+        );
         add(scrollPane, BorderLayout.CENTER);
 
         // Actions

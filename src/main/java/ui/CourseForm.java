@@ -9,6 +9,7 @@ import java.awt.*;
 import java.util.List;
 
 import util.ValidationUtil;
+import util.UITheme;
 
 public class CourseForm extends JFrame {
 
@@ -40,7 +41,7 @@ public class CourseForm extends JFrame {
 
         setTitle("Course Management");
 
-        setSize(900, 600);
+        setSize(1200, 800);
 
         setLocationRelativeTo(null);
 
@@ -51,7 +52,36 @@ public class CourseForm extends JFrame {
 
     private void initComponents() {
 
+        UITheme.styleFrame(this);
+
         setLayout(new BorderLayout());
+
+        JLabel title =
+                new JLabel(
+                        "course Management"
+                );
+
+        title.setFont(
+                new Font(
+                        "SansSerif",
+                        Font.BOLD,
+                        28
+                )
+        );
+
+        title.setBorder(
+                BorderFactory.createEmptyBorder(
+                        20,
+                        20,
+                        20,
+                        20
+                )
+        );
+
+        add(
+                title,
+                BorderLayout.NORTH
+        );
 
         JPanel formPanel =
                 new JPanel(
@@ -117,6 +147,13 @@ public class CourseForm extends JFrame {
 
         formPanel.add(searchField);
 
+        UITheme.styleTextField(idField);
+        UITheme.styleTextField(titleField);
+        UITheme.styleTextField(deptField);
+        UITheme.styleTextField(creditsField);
+        UITheme.styleTextField(searchField);
+
+
         // Buttons
         addButton =
                 new JButton("Add");
@@ -167,8 +204,27 @@ public class CourseForm extends JFrame {
         JScrollPane scrollPane =
                 new JScrollPane(table);
 
-        add(formPanel, BorderLayout.NORTH);
+        UITheme.styleTable(table);
 
+        JPanel northPanel =
+                new JPanel(
+                        new BorderLayout()
+                );
+
+        northPanel.add(
+                title,
+                BorderLayout.NORTH
+        );
+
+        northPanel.add(
+                formPanel,
+                BorderLayout.CENTER
+        );
+
+        add(
+                northPanel,
+                BorderLayout.NORTH
+        );
         add(scrollPane, BorderLayout.CENTER);
 
         // Actions
