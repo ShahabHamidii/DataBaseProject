@@ -243,6 +243,9 @@ public class TeachingAssignmentForm extends JFrame {
         if (result) {
 
             loadAssignments();
+
+            clearFields();
+
         }
     }
 
@@ -315,6 +318,9 @@ public class TeachingAssignmentForm extends JFrame {
         if(deleted){
 
             loadAssignments();
+
+            clearFields();
+
         }
     }
 
@@ -361,5 +367,15 @@ public class TeachingAssignmentForm extends JFrame {
                 );
             }
         }
+    }
+
+    private void clearFields() {
+
+        sectionField.setText("");
+
+        semesterField.setText("");
+
+        yearField.setText("");
+
     }
 }

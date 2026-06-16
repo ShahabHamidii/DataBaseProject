@@ -261,10 +261,23 @@ public class SectionForm extends JFrame {
             return;
         }
 
-        if (result) {
+        if(result){
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Operation Successful"
+            );
 
             loadSections();
+
             clearFields();
+
+        }else{
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Operation Failed"
+            );
         }
     }
 
@@ -376,10 +389,23 @@ public class SectionForm extends JFrame {
                                 )
                         );
 
-        if (result) {
+        if(result){
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Operation Successful"
+            );
 
             loadSections();
+
             clearFields();
+
+        }else{
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Operation Failed"
+            );
         }
     }
 
@@ -404,10 +430,23 @@ public class SectionForm extends JFrame {
                                 section
                         );
 
-        if (result) {
+        if(result){
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Operation Successful"
+            );
 
             loadSections();
+
             clearFields();
+
+        }else{
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Operation Failed"
+            );
         }
     }
 

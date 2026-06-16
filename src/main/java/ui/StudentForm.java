@@ -3,11 +3,13 @@ package ui;
 import dao.StudentDAO;
 import model.Student;
 import util.UIUtil;
+
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.event.ListSelectionEvent;
+
 import util.UITheme;
 
 import util.ValidationUtil;
@@ -35,11 +37,15 @@ public class StudentForm extends JFrame {
 
         setSize(1200, 800);
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(
+                JFrame.DISPOSE_ON_CLOSE
+        );
 
         setLocationRelativeTo(null);
 
         initComponents();
+
+        loadStudents();
 
         setVisible(true);
     }
@@ -384,7 +390,7 @@ public class StudentForm extends JFrame {
     }
 
     private void updateStudent() {
-        if(
+        if (
                 ValidationUtil.isEmpty(
                         idField.getText()
                 )
@@ -420,7 +426,7 @@ public class StudentForm extends JFrame {
             return;
         }
 
-        if(
+        if (
 
                 !ValidationUtil.isInteger(
                         idField.getText()
@@ -624,6 +630,7 @@ public class StudentForm extends JFrame {
             }
         }
     }
+
     private void fillFormFromTable() {
 
         int row =

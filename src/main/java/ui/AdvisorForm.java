@@ -30,7 +30,7 @@ public class AdvisorForm extends JFrame {
 
         setTitle("Advisor Assignment");
 
-        setSize(500,300);
+        setSize(1000,800);
 
         setLocationRelativeTo(null);
 
@@ -46,7 +46,7 @@ public class AdvisorForm extends JFrame {
 
         JPanel panel =
                 new JPanel(
-                        new GridLayout(3,2,10,10)
+                        new GridLayout(6,2,10,10)
                 );
 
         tableModel =
@@ -61,6 +61,10 @@ public class AdvisorForm extends JFrame {
 
         table =
                 new JTable(tableModel);
+
+        setLayout(new BorderLayout());
+
+        add(panel, BorderLayout.NORTH);
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
@@ -103,7 +107,6 @@ public class AdvisorForm extends JFrame {
 
         panel.add(assignButton);
 
-        add(panel);
 
         assignButton.addActionListener(
                 e -> assignAdvisor()
@@ -216,6 +219,7 @@ public class AdvisorForm extends JFrame {
         if(deleted){
 
             loadAssignments();
+
         }
     }
 }

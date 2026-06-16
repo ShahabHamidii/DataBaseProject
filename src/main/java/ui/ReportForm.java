@@ -37,6 +37,8 @@ public class ReportForm extends JFrame {
 
         initComponents();
 
+        loadReports();
+
         setVisible(true);
     }
 

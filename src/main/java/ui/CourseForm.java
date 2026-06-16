@@ -47,6 +47,8 @@ public class CourseForm extends JFrame {
 
         initComponents();
 
+        loadCourses();
+
         setVisible(true);
     }
 
@@ -252,44 +254,6 @@ public class CourseForm extends JFrame {
                 .addListSelectionListener(
                         e -> fillFormFromTable()
                 );
-        // Table Selection
-        table.getSelectionModel()
-                .addListSelectionListener(e -> {
-
-                    int selectedRow =
-                            table.getSelectedRow();
-
-                    if (selectedRow != -1) {
-
-                        idField.setText(
-                                tableModel.getValueAt(
-                                        selectedRow,
-                                        0
-                                ).toString()
-                        );
-
-                        titleField.setText(
-                                tableModel.getValueAt(
-                                        selectedRow,
-                                        1
-                                ).toString()
-                        );
-
-                        deptField.setText(
-                                tableModel.getValueAt(
-                                        selectedRow,
-                                        2
-                                ).toString()
-                        );
-
-                        creditsField.setText(
-                                tableModel.getValueAt(
-                                        selectedRow,
-                                        3
-                                ).toString()
-                        );
-                    }
-                });
     }
 
     private void addCourse() {

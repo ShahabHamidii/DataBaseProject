@@ -33,6 +33,7 @@ public class InstructorForm extends JFrame {
         setLocationRelativeTo(null);
 
         initComponents();
+
         loadInstructors();
 
         setVisible(true);
@@ -224,9 +225,23 @@ public class InstructorForm extends JFrame {
                 new InstructorDAO()
                         .addInstructor(instructor);
 
-        if (result) {
+        if(result){
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Operation Successful"
+            );
 
             loadInstructors();
+
+            clearFields();
+
+        }else{
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Operation Failed"
+            );
         }
     }
 
@@ -336,9 +351,23 @@ public class InstructorForm extends JFrame {
                                 instructor
                         );
 
-        if (result) {
+        if(result){
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Operation Successful"
+            );
 
             loadInstructors();
+
+            clearFields();
+
+        }else{
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Operation Failed"
+            );
         }
     }
 
@@ -384,9 +413,23 @@ public class InstructorForm extends JFrame {
                 new InstructorDAO()
                         .deleteInstructor(id);
 
-        if (result) {
+        if(result){
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Operation Successful"
+            );
 
             loadInstructors();
+
+            clearFields();
+
+        }else{
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Operation Failed"
+            );
         }
     }
 
@@ -470,4 +513,16 @@ public class InstructorForm extends JFrame {
                 ).toString()
         );
     }
+
+    private void clearFields() {
+
+        idField.setText("");
+
+        nameField.setText("");
+
+        deptField.setText("");
+
+        salaryField.setText("");
+    }
+
 }
