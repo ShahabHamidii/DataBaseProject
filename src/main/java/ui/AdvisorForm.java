@@ -162,11 +162,10 @@ public class AdvisorForm extends JFrame {
             return;
         }
         boolean result =
-                new AdvisorDAO()
-                        .assignAdvisor(
-                                student.getId(),
-                                instructor.getId()
-                        );
+                dao.assignAdvisor(
+                        student.getId(),
+                        instructor.getId()
+                );
 
         if(result) {
 
@@ -174,6 +173,8 @@ public class AdvisorForm extends JFrame {
                     this,
                     "Advisor Assigned"
             );
+
+            loadAssignments();
         }
     }
 
@@ -201,6 +202,11 @@ public class AdvisorForm extends JFrame {
 
         if(row == -1){
 
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Select a row first."
+            );
+
             return;
         }
 
@@ -212,14 +218,30 @@ public class AdvisorForm extends JFrame {
                         ).toString()
                 );
 
+        int choice =
+                JOptionPane.showConfirmDialog(
+                        this,
+                        "Delete Advisor Assignment?",
+                        "Confirm",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+        if(choice != JOptionPane.YES_OPTION){
+            return;
+        }
+
         boolean deleted =
                 new AdvisorDAO()
                         .deleteAdvisor(studentId);
 
         if(deleted){
 
-            loadAssignments();
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Assignment Deleted"
+            );
 
+            loadAssignments();
         }
     }
 }
