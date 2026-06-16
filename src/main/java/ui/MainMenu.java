@@ -30,6 +30,10 @@ public class MainMenu extends JFrame {
 
     private JButton chartButton;
 
+    private JButton departmentButton;
+
+    private JButton timeSlotButton;
+
     public MainMenu() {
 
         setTitle("University DBMS");
@@ -120,6 +124,15 @@ public class MainMenu extends JFrame {
                         "Statistics Charts"
                 );
 
+        departmentButton =
+                new JButton(
+                        "Department Management"
+                );
+
+        timeSlotButton =
+                new JButton(
+                        "Time Slot Management"
+                );
 
         exitButton =
                 new JButton(
@@ -150,6 +163,8 @@ public class MainMenu extends JFrame {
         panel.add(sectionButton);
 
         panel.add(chartButton);
+
+        panel.add(timeSlotButton);
 
         add(panel);
 
@@ -202,6 +217,15 @@ public class MainMenu extends JFrame {
         chartButton.addActionListener(
                 e -> new DashboardChartForm()
         );
+
+        departmentButton.addActionListener(
+                e -> new DepartmentForm()
+        );
+
+        timeSlotButton.addActionListener(
+                e -> new TimeSlotForm()
+        );
+
     }
 
     public static void main(String[] args) {
