@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
-public class ReportForm extends JFrame {
+public class ReportPanel extends JPanel {
 
     private JTable table;
 
@@ -27,19 +27,11 @@ public class ReportForm extends JFrame {
 
     private JButton advisorReportButton;
 
-    public ReportForm() {
-
-        setTitle("Enrollment Reports");
-
-        setSize(900, 500);
-
-        setLocationRelativeTo(null);
+    public ReportPanel() {
 
         initComponents();
 
         loadReports();
-
-        setVisible(true);
     }
 
     private void initComponents() {
@@ -76,6 +68,15 @@ public class ReportForm extends JFrame {
                         "Advisor Report"
                 );
 
+        departmentStatsButton =
+                new JButton(
+                        "Students Per Department"
+                );
+
+        add(
+                departmentStatsButton,
+                BorderLayout.SOUTH
+        );
 
         JPanel buttonPanel = new JPanel();
 
@@ -93,15 +94,6 @@ public class ReportForm extends JFrame {
 
         add(buttonPanel, BorderLayout.NORTH);
 
-        departmentStatsButton =
-                new JButton(
-                        "Students Per Department"
-                );
-
-        add(
-                departmentStatsButton,
-                BorderLayout.SOUTH
-        );
 
         String[] columns = {
 

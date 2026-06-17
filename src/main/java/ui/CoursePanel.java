@@ -1,64 +1,58 @@
 package ui;
 
-import dao.StudentDAO;
-import model.Student;
-import util.UIUtil;
+import dao.CourseDAO;
+import model.Course;
 
-import javax.swing.table.DefaultTableModel;
-import java.util.List;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import javax.swing.event.ListSelectionEvent;
-
-import util.UITheme;
+import java.util.List;
 
 import util.ValidationUtil;
+import util.UITheme;
 
-public class StudentForm extends JFrame {
+public class CoursePanel extends JPanel {
 
     private JTextField idField;
-    private JTextField nameField;
-    private JTextField deptField;
-    private JTextField creditField;
-    private JTable table;
-    private JButton updateButton;
-    private JButton deleteButton;
-    private DefaultTableModel tableModel;
-    private JTextField searchField;
-    private JComboBox<String> searchTypeCombo;
 
-    private JButton searchButton;
-    private JButton loadButton;
+    private JTextField titleField;
+
+    private JTextField deptField;
+
+    private JTextField creditsField;
+
+    private JTextField searchField;
+
     private JButton addButton;
 
-    public StudentForm() {
+    private JButton updateButton;
 
-        setTitle("Student Management");
+    private JButton deleteButton;
 
-        setSize(1200, 800);
+    private JButton loadButton;
 
-        setDefaultCloseOperation(
-                JFrame.DISPOSE_ON_CLOSE
-        );
+    private JButton searchButton;
 
-        setLocationRelativeTo(null);
+    private JTable table;
+
+    private DefaultTableModel tableModel;
+
+    public CoursePanel() {
 
         initComponents();
 
-        loadStudents();
-
-        setVisible(true);
+        loadCourses();
     }
 
     private void initComponents() {
 
-        UITheme.styleFrame(this);
+//        UITheme.styleFrame(this);
 
         setLayout(new BorderLayout());
 
         JLabel title =
                 new JLabel(
-                        "Student Management"
+                        "course Management"
                 );
 
         title.setFont(
@@ -78,14 +72,10 @@ public class StudentForm extends JFrame {
                 )
         );
 
-        add(
-                title,
-                BorderLayout.NORTH
-        );
 
         JPanel formPanel =
                 new JPanel(
-                        new GridLayout(0, 2, 10, 10)
+                        new GridLayout(8, 2, 10, 10)
                 );
 
         formPanel.setBorder(
@@ -97,40 +87,64 @@ public class StudentForm extends JFrame {
                 )
         );
 
-        formPanel.add(new JLabel("Student ID:"));
-        idField = new JTextField();
+        // Course ID
+        formPanel.add(
+                new JLabel("Course ID:")
+        );
+
+        idField =
+                new JTextField();
+
         formPanel.add(idField);
 
+        // Title
+        formPanel.add(
+                new JLabel("Title:")
+        );
 
-        formPanel.add(new JLabel("Name:"));
-        nameField = new JTextField();
-        formPanel.add(nameField);
+        titleField =
+                new JTextField();
 
+        formPanel.add(titleField);
 
-        formPanel.add(new JLabel("Department:"));
-        deptField = new JTextField();
+        // Department
+        formPanel.add(
+                new JLabel("Department:")
+        );
 
+        deptField =
+                new JTextField();
 
         formPanel.add(deptField);
-        formPanel.add(new JLabel("Total Credits:"));
-        creditField = new JTextField();
-        formPanel.add(creditField);
 
+        // Credits
+        formPanel.add(
+                new JLabel("Credits:")
+        );
 
-        formPanel.add(new JLabel("Search:"));
-        searchField = new JTextField();
+        creditsField =
+                new JTextField();
+
+        formPanel.add(creditsField);
+
+        // Search
+        formPanel.add(
+                new JLabel("Search Department:")
+        );
+
+        searchField =
+                new JTextField();
+
         formPanel.add(searchField);
 
-        formPanel.add(new JLabel("Search Type:"));
-        searchTypeCombo = new JComboBox<>(new String[]{"ID", "Department"});
-        formPanel.add(searchTypeCombo);
-
         UITheme.styleTextField(idField);
-        UITheme.styleTextField(nameField);
+        UITheme.styleTextField(titleField);
         UITheme.styleTextField(deptField);
-        UITheme.styleTextField(creditField);
+        UITheme.styleTextField(creditsField);
         UITheme.styleTextField(searchField);
 
+
+        // Buttons
         addButton =
                 new JButton("Add");
 
@@ -146,9 +160,6 @@ public class StudentForm extends JFrame {
         searchButton =
                 new JButton("Search");
 
-        formPanel.add(searchButton);
-        formPanel.add(new JLabel());
-
         formPanel.add(addButton);
 
         formPanel.add(updateButton);
@@ -157,20 +168,12 @@ public class StudentForm extends JFrame {
 
         formPanel.add(loadButton);
 
-        UIUtil.styleButton(addButton);
-
-        UIUtil.styleButton(updateButton);
-
-        UIUtil.styleButton(deleteButton);
-
-        UIUtil.styleButton(loadButton);
-
-        UIUtil.styleButton(searchButton);
+        formPanel.add(searchButton);
 
         // Table
         String[] columns = {
-                "ID",
-                "Name",
+                "Course ID",
+                "Title",
                 "Department",
                 "Credits"
         };
@@ -180,8 +183,6 @@ public class StudentForm extends JFrame {
 
         table =
                 new JTable(tableModel);
-
-        UITheme.styleTable(table);
 
         table.setRowHeight(30);
 
@@ -193,7 +194,8 @@ public class StudentForm extends JFrame {
         JScrollPane scrollPane =
                 new JScrollPane(table);
 
-        // Add to frame
+        UITheme.styleTable(table);
+
         JPanel northPanel =
                 new JPanel(
                         new BorderLayout()
@@ -217,22 +219,23 @@ public class StudentForm extends JFrame {
 
         // Actions
         addButton.addActionListener(
-                e -> addStudent()
+                e -> addCourse()
         );
 
         updateButton.addActionListener(
-                e -> updateStudent()
+                e -> updateCourse()
         );
 
         deleteButton.addActionListener(
-                e -> deleteStudent()
+                e -> deleteCourse()
         );
 
         loadButton.addActionListener(
-                e -> loadStudents()
+                e -> loadCourses()
         );
+
         searchButton.addActionListener(
-                e -> searchStudent()
+                e -> searchCourses()
         );
 
         table.getSelectionModel()
@@ -241,7 +244,7 @@ public class StudentForm extends JFrame {
                 );
     }
 
-    private void addStudent() {
+    private void addCourse() {
 
         if (
 
@@ -252,7 +255,7 @@ public class StudentForm extends JFrame {
                         ||
 
                         ValidationUtil.isEmpty(
-                                nameField.getText()
+                                titleField.getText()
                         )
 
                         ||
@@ -264,7 +267,7 @@ public class StudentForm extends JFrame {
                         ||
 
                         ValidationUtil.isEmpty(
-                                creditField.getText()
+                                creditsField.getText()
                         )
 
         ) {
@@ -279,17 +282,12 @@ public class StudentForm extends JFrame {
 
             return;
         }
+
         if (
 
                 !ValidationUtil.isInteger(
-                        idField.getText()
+                        creditsField.getText()
                 )
-
-                        ||
-
-                        !ValidationUtil.isInteger(
-                                creditField.getText()
-                        )
 
         ) {
 
@@ -297,7 +295,7 @@ public class StudentForm extends JFrame {
 
                     this,
 
-                    "ID and Credits must be numbers."
+                    "Credits must be numeric."
 
             );
 
@@ -306,42 +304,35 @@ public class StudentForm extends JFrame {
 
         try {
 
-            int id =
-                    Integer.parseInt(
-                            idField.getText()
+            Course course =
+                    new Course(
+                            idField.getText(),
+
+                            titleField.getText(),
+
+                            deptField.getText(),
+
+                            Integer.parseInt(
+                                    creditsField.getText()
+                            )
                     );
 
-            String name =
-                    nameField.getText();
-
-            String dept =
-                    deptField.getText();
-
-            int credits =
-                    Integer.parseInt(
-                            creditField.getText()
-                    );
-
-            Student student =
-                    new Student(
-                            id,
-                            name,
-                            dept,
-                            credits
-                    );
-
-            StudentDAO dao =
-                    new StudentDAO();
+            CourseDAO dao =
+                    new CourseDAO();
 
             boolean inserted =
-                    dao.addStudent(student);
+                    dao.addCourse(course);
 
             if (inserted) {
 
                 JOptionPane.showMessageDialog(
                         this,
-                        "Student Added Successfully!"
+                        "Course Added!"
                 );
+
+                loadCourses();
+
+                clearFields();
 
             } else {
 
@@ -351,46 +342,46 @@ public class StudentForm extends JFrame {
                 );
             }
 
-        } catch (Exception ex) {
+        } catch (Exception e) {
 
             JOptionPane.showMessageDialog(
                     this,
-                    ex.getMessage()
+                    e.getMessage()
             );
         }
-        loadStudents();
-        clearFields();
     }
 
-    private void loadStudents() {
+    private void loadCourses() {
 
         tableModel.setRowCount(0);
 
-        StudentDAO dao =
-                new StudentDAO();
+        CourseDAO dao =
+                new CourseDAO();
 
-        List<Student> students =
-                dao.getAllStudents();
+        List<Course> courses =
+                dao.getAllCourses();
 
-        for (Student student : students) {
+        for (Course course : courses) {
 
             Object[] row = {
 
-                    student.getId(),
+                    course.getCourseId(),
 
-                    student.getName(),
+                    course.getTitle(),
 
-                    student.getDeptName(),
+                    course.getDeptName(),
 
-                    student.getTotalCredits()
+                    course.getCredits()
             };
 
             tableModel.addRow(row);
         }
     }
 
-    private void updateStudent() {
+    private void updateCourse() {
+
         if (
+
                 ValidationUtil.isEmpty(
                         idField.getText()
                 )
@@ -398,7 +389,7 @@ public class StudentForm extends JFrame {
                         ||
 
                         ValidationUtil.isEmpty(
-                                nameField.getText()
+                                titleField.getText()
                         )
 
                         ||
@@ -410,7 +401,7 @@ public class StudentForm extends JFrame {
                         ||
 
                         ValidationUtil.isEmpty(
-                                creditField.getText()
+                                creditsField.getText()
                         )
 
         ) {
@@ -429,14 +420,8 @@ public class StudentForm extends JFrame {
         if (
 
                 !ValidationUtil.isInteger(
-                        idField.getText()
+                        creditsField.getText()
                 )
-
-                        ||
-
-                        !ValidationUtil.isInteger(
-                                creditField.getText()
-                        )
 
         ) {
 
@@ -444,7 +429,7 @@ public class StudentForm extends JFrame {
 
                     this,
 
-                    "ID and Credits must be numbers."
+                    "Credits must be numeric."
 
             );
 
@@ -453,36 +438,33 @@ public class StudentForm extends JFrame {
 
         try {
 
-            Student student =
-                    new Student(
-                            Integer.parseInt(
-                                    idField.getText()
-                            ),
+            Course course =
+                    new Course(
+                            idField.getText(),
 
-                            nameField.getText(),
+                            titleField.getText(),
 
                             deptField.getText(),
 
                             Integer.parseInt(
-                                    creditField.getText()
+                                    creditsField.getText()
                             )
                     );
 
-            StudentDAO dao =
-                    new StudentDAO();
+            CourseDAO dao =
+                    new CourseDAO();
 
             boolean updated =
-                    dao.updateStudent(student);
+                    dao.updateCourse(course);
 
             if (updated) {
 
                 JOptionPane.showMessageDialog(
                         this,
-                        "Student Updated!"
+                        "Course Updated!"
                 );
 
-                loadStudents();
-                clearFields();
+                loadCourses();
 
             } else {
 
@@ -501,29 +483,27 @@ public class StudentForm extends JFrame {
         }
     }
 
-    private void deleteStudent() {
+    private void deleteCourse() {
 
         try {
 
-            int id =
-                    Integer.parseInt(
-                            idField.getText()
-                    );
-
-            StudentDAO dao =
-                    new StudentDAO();
+            CourseDAO dao =
+                    new CourseDAO();
 
             boolean deleted =
-                    dao.deleteStudent(id);
+                    dao.deleteCourse(
+                            idField.getText()
+                    );
 
             if (deleted) {
 
                 JOptionPane.showMessageDialog(
                         this,
-                        "Student Deleted!"
+                        "Course Deleted!"
                 );
 
-                loadStudents();
+                loadCourses();
+
                 clearFields();
 
             } else {
@@ -543,92 +523,49 @@ public class StudentForm extends JFrame {
         }
     }
 
+    private void searchCourses() {
+
+        tableModel.setRowCount(0);
+
+        String dept =
+                searchField.getText();
+
+        List<Course> courses =
+                new CourseDAO()
+                        .searchByDepartment(
+                                searchField.getText()
+                        );
+
+        for (Course course : courses) {
+
+            if (course.getDeptName()
+                    .equalsIgnoreCase(dept)) {
+
+                Object[] row = {
+
+                        course.getCourseId(),
+
+                        course.getTitle(),
+
+                        course.getDeptName(),
+
+                        course.getCredits()
+                };
+
+                tableModel.addRow(row);
+            }
+        }
+    }
+
     private void clearFields() {
 
         idField.setText("");
 
-        nameField.setText("");
+        titleField.setText("");
 
         deptField.setText("");
 
-        creditField.setText("");
-    }
-
-    private void searchStudent() {
-
-        tableModel.setRowCount(0);
-
-        StudentDAO dao = new StudentDAO();
-
-        String searchText = searchField.getText().trim();
-
-        if (searchText.isEmpty()) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Please enter a search value"
-            );
-
-            return;
-        }
-
-        String searchType = (String) searchTypeCombo.getSelectedItem();
-
-        if ("ID".equals(searchType)) {
-
-            if (!ValidationUtil.isInteger(searchText)) {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Please enter a valid student ID"
-                );
-
-                return;
-            }
-
-            Student student = dao.getStudentById(
-                    Integer.parseInt(searchText)
-            );
-
-            if (student != null) {
-
-                tableModel.addRow(new Object[]{
-                        student.getId(),
-                        student.getName(),
-                        student.getDeptName(),
-                        student.getTotalCredits()
-                });
-
-            } else {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Student not found"
-                );
-            }
-
-        } else {
-
-            loadStudents();
-
-            for (int i = tableModel.getRowCount() - 1; i >= 0; i--) {
-
-                String dept = tableModel.getValueAt(i, 2)
-                        .toString();
-
-                if (!dept.equalsIgnoreCase(searchText)) {
-                    tableModel.removeRow(i);
-                }
-            }
-
-            if (tableModel.getRowCount() == 0) {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "No students found in this department"
-                );
-            }
-        }
+        creditsField.setText("");
     }
 
     private void fillFormFromTable() {
@@ -648,7 +585,7 @@ public class StudentForm extends JFrame {
                 ).toString()
         );
 
-        nameField.setText(
+        titleField.setText(
                 tableModel.getValueAt(
                         row,
                         1
@@ -662,7 +599,7 @@ public class StudentForm extends JFrame {
                 ).toString()
         );
 
-        creditField.setText(
+        creditsField.setText(
                 tableModel.getValueAt(
                         row,
                         3

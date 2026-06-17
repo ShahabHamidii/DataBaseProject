@@ -8,7 +8,7 @@ import model.Student;
 import javax.swing.*;
 import java.awt.*;
 
-public class EnrollmentForm extends JFrame {
+public class EnrollmentPanel extends JPanel {
 
     private JComboBox<Student> studentCombo;
 
@@ -22,13 +22,7 @@ public class EnrollmentForm extends JFrame {
 
     private JButton enrollButton;
 
-    public EnrollmentForm() {
-
-        setTitle("Enrollment System");
-
-        setSize(500, 400);
-
-        setLocationRelativeTo(null);
+    public EnrollmentPanel() {
 
         initComponents();
 
@@ -36,7 +30,6 @@ public class EnrollmentForm extends JFrame {
 
         loadCourses();
 
-        setVisible(true);
     }
 
     private void initComponents() {

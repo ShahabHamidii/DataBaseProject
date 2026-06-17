@@ -12,14 +12,15 @@ public class DBConnection {
     private static final String USER = "root";
     private static final String PASSWORD = "shah1383";
 
+    private static Connection connection;
+
     public static Connection getConnection() throws SQLException {
-        System.out.println("Connecting to DB...");
 
-        return DriverManager.getConnection(
-                URL,
-                USER,
-                PASSWORD
-        );
+        if (connection == null || connection.isClosed()) {
+            System.out.println("Connecting to DB...");
+            connection = DriverManager.getConnection(URL, USER, PASSWORD);
+        }
+
+        return connection;
     }
-
 }

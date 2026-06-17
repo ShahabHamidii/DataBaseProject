@@ -52,4 +52,8 @@ public class UITheme {
                         )
                 );
     }
+
+    public static void stylePanel(JPanel panel) {
+        panel.setBackground(Color.WHITE);
+    }
 }

@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 
-public class SectionForm extends JFrame {
+public class SectionPanel extends JPanel {
 
     private JTextField courseIdField;
     private JTextField secIdField;
@@ -33,19 +33,12 @@ public class SectionForm extends JFrame {
 
     private JButton searchButton;
 
-    public SectionForm() {
-
-        setTitle("Section Management");
-
-        setSize(1100, 700);
-
-        setLocationRelativeTo(null);
+    public SectionPanel() {
 
         initComponents();
 
         loadSections();
 
-        setVisible(true);
     }
 
     private void initComponents() {

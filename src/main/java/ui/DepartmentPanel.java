@@ -8,7 +8,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class DepartmentForm extends JFrame {
+public class DepartmentPanel extends JPanel {
 
     private JTextField nameField;
     private JTextField buildingField;
@@ -23,19 +23,12 @@ public class DepartmentForm extends JFrame {
     private JButton updateButton;
     private JButton deleteButton;
 
-    public DepartmentForm() {
-
-        setTitle("Department Management");
-
-        setSize(900,600);
-
-        setLocationRelativeTo(null);
+    public DepartmentPanel() {
 
         initComponents();
 
         loadDepartments();
 
-        setVisible(true);
     }
 
     private void initComponents() {
@@ -44,7 +37,7 @@ public class DepartmentForm extends JFrame {
 
         JPanel panel =
                 new JPanel(
-                        new GridLayout(4,2,10,10)
+                        new GridLayout(6,2,10,10)
                 );
 
         nameField =

@@ -9,7 +9,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class PrerequisiteForm extends JFrame {
+public class PrerequisitePanel extends JPanel {
 
     private JComboBox<Course> courseCombo;
 
@@ -29,21 +29,12 @@ public class PrerequisiteForm extends JFrame {
 
     private JTextField searchField;
 
-    public PrerequisiteForm() {
-
-        setTitle("Prerequisite Management");
-
-        setSize(800,500);
-
-        setLocationRelativeTo(null);
+    public PrerequisitePanel() {
 
         initComponents();
 
-        loadCourses();
-
         loadPrerequisites();
 
-        setVisible(true);
     }
 
     private void initComponents() {

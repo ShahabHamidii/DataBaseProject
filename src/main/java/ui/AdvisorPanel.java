@@ -10,7 +10,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class AdvisorForm extends JFrame {
+public class AdvisorPanel extends JPanel {
 
     private JComboBox<Student> studentCombo;
 
@@ -26,21 +26,12 @@ public class AdvisorForm extends JFrame {
 
     private JButton deleteButton;
 
-    public AdvisorForm() {
-
-        setTitle("Advisor Assignment");
-
-        setSize(1000,800);
-
-        setLocationRelativeTo(null);
+    public AdvisorPanel() {
 
         initComponents();
 
-        loadData();
-
         loadAssignments();
 
-        setVisible(true);
     }
     private void initComponents() {
 

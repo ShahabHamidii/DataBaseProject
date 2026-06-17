@@ -11,7 +11,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class TeachingAssignmentForm extends JFrame {
+public class TeachingAssignmentPanel extends JPanel {
 
     private JComboBox<Instructor> instructorCombo;
 
@@ -37,13 +37,7 @@ public class TeachingAssignmentForm extends JFrame {
 
     private JButton searchButton;
 
-    public TeachingAssignmentForm() {
-
-        setTitle("Teaching Assignments");
-
-        setSize(900, 600);
-
-        setLocationRelativeTo(null);
+    public TeachingAssignmentPanel() {
 
         initComponents();
 
@@ -51,7 +45,6 @@ public class TeachingAssignmentForm extends JFrame {
 
         loadAssignments();
 
-        setVisible(true);
     }
 
     private void initComponents() {

@@ -9,7 +9,7 @@ import java.awt.*;
 
 import util.ValidationUtil;
 
-public class InstructorForm extends JFrame {
+public class InstructorPanel extends JPanel {
 
     private JTextField idField;
     private JTextField nameField;
@@ -24,19 +24,13 @@ public class InstructorForm extends JFrame {
     private JTextField searchField;
 
     private JButton searchButton;
-    public InstructorForm() {
 
-        setTitle("Instructor Management");
 
-        setSize(900, 600);
-
-        setLocationRelativeTo(null);
+    public InstructorPanel() {
 
         initComponents();
 
         loadInstructors();
-
-        setVisible(true);
     }
 
     private void initComponents() {

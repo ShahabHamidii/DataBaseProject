@@ -1,8 +1,8 @@
-import ui.MainMenu;
+import ui.MainDashboard;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        new MainMenu();    }
+        new MainDashboard();    }
 }
