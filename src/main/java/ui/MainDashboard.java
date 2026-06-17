@@ -1,5 +1,6 @@
 package ui;
 
+import model.User;
 import util.UITheme;
 import util.UIUtil;
 
@@ -8,33 +9,34 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class MainDashboard extends JFrame {
 
     private JPanel contentPanel;
     private final Map<String, JButton> navButtons = new LinkedHashMap<>();
     private JButton activeNavButton;
+    private final User currentUser;
 
-    public MainDashboard() {
-        setTitle("University Management System");
+    public MainDashboard(User user) {
+        this.currentUser = user;
+        setTitle("UniSys — " + capitalize(user.getRole().name())
+                + "  |  " + user.getUsername());
         setSize(1280, 820);
         setMinimumSize(new Dimension(1024, 680));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-
         initUI();
-        showPanel(new DashboardPanel(), "Dashboard");
+        // اولین panel رو بدون ساخت مجدد نشون بده
+        SwingUtilities.invokeLater(() -> showPanel(new DashboardPanel(), "Dashboard"));
     }
 
     private void initUI() {
         setLayout(new BorderLayout(0, 0));
-
-        JPanel sidebar = buildSidebar();
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(UITheme.CONTENT_BG);
-
-        add(sidebar, BorderLayout.WEST);
-        add(contentPanel, BorderLayout.CENTER);
+        add(buildSidebar(), BorderLayout.WEST);
+        add(contentPanel,   BorderLayout.CENTER);
     }
 
     private JPanel buildSidebar() {
@@ -42,91 +44,193 @@ public class MainDashboard extends JFrame {
         sidebar.setBackground(UITheme.SIDEBAR_BG);
         sidebar.setPreferredSize(new Dimension(240, 0));
 
+        sidebar.add(buildBrand(),   BorderLayout.NORTH);
+        sidebar.add(buildNav(),     BorderLayout.CENTER);
+        sidebar.add(buildFooter(),  BorderLayout.SOUTH);
+
+        return sidebar;
+    }
+
+    // ── Brand ───────────────────────────────────────────────
+    private JPanel buildBrand() {
         JPanel brand = new JPanel(new BorderLayout());
         brand.setBackground(UITheme.SIDEBAR_BG);
         brand.setBorder(new EmptyBorder(28, 22, 24, 22));
 
-        JLabel brandIcon = new JLabel("\uD83C\uDFEB");
-        brandIcon.setFont(new Font("SansSerif", Font.PLAIN, 28));
-        brandIcon.setBorder(new EmptyBorder(0, 0, 0, 10));
+        JLabel icon = new JLabel("🎓");
+        icon.setFont(new Font("SansSerif", Font.PLAIN, 28));
+        icon.setBorder(new EmptyBorder(0, 0, 0, 10));
 
-        JPanel brandText = new JPanel();
-        brandText.setLayout(new BoxLayout(brandText, BoxLayout.Y_AXIS));
-        brandText.setOpaque(false);
+        JPanel text = new JPanel();
+        text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
+        text.setOpaque(false);
 
-        JLabel brandTitle = new JLabel("UniSys");
-        brandTitle.setFont(new Font("SansSerif", Font.BOLD, 20));
-        brandTitle.setForeground(Color.WHITE);
+        JLabel name = new JLabel("UniSys");
+        name.setFont(new Font("SansSerif", Font.BOLD, 20));
+        name.setForeground(Color.WHITE);
 
-        JLabel brandSub = new JLabel("Management System");
-        brandSub.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        brandSub.setForeground(UITheme.SIDEBAR_TEXT);
+        JLabel sub = new JLabel("Management System");
+        sub.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        sub.setForeground(UITheme.SIDEBAR_TEXT);
 
-        brandText.add(brandTitle);
-        brandText.add(brandSub);
+        text.add(name);
+        text.add(sub);
 
-        JPanel brandRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        brandRow.setOpaque(false);
-        brandRow.add(brandIcon);
-        brandRow.add(brandText);
-        brand.add(brandRow, BorderLayout.CENTER);
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        row.setOpaque(false);
+        row.add(icon);
+        row.add(text);
+        brand.add(row, BorderLayout.CENTER);
 
-        sidebar.add(brand, BorderLayout.NORTH);
+        // Badge نقش کاربر
+        JLabel roleBadge = new JLabel(currentUser.getRole().name(), SwingConstants.CENTER);
+        roleBadge.setFont(new Font("SansSerif", Font.BOLD, 10));
+        roleBadge.setForeground(Color.WHITE);
+        roleBadge.setOpaque(true);
+        roleBadge.setBackground(roleColor(currentUser.getRole()));
+        roleBadge.setBorder(new EmptyBorder(3, 10, 3, 10));
+        roleBadge.setPreferredSize(new Dimension(80, 20));
 
+        JPanel badgeRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 6));
+        badgeRow.setOpaque(false);
+        badgeRow.add(roleBadge);
+        brand.add(badgeRow, BorderLayout.SOUTH);
+
+        return brand;
+    }
+
+    // ── Nav ─────────────────────────────────────────────────
+    private JScrollPane buildNav() {
         JPanel navPanel = new JPanel();
         navPanel.setLayout(new BoxLayout(navPanel, BoxLayout.Y_AXIS));
         navPanel.setBackground(UITheme.SIDEBAR_BG);
         navPanel.setBorder(new EmptyBorder(0, 10, 20, 10));
 
-        addNav(navPanel, "\u2302", "Dashboard", () -> new DashboardPanel());
-        addNav(navPanel, "\uD83C\uDF93", "Students", () -> new StudentPanel());
-        addNav(navPanel, "\uD83D\uDCDA", "Courses", () -> new CoursePanel());
-        addNav(navPanel, "\uD83D\uDC68\u200D\uD83C\uDFEB", "Instructors", () -> new InstructorPanel());
-        addNav(navPanel, "\uD83C\uDFEC", "Departments", () -> new DepartmentPanel());
-        addNav(navPanel, "\uD83D\uDDD3", "Sections", () -> new SectionPanel());
-        addNav(navPanel, "\u270D", "Enrollment", () -> new EnrollmentPanel());
-        addNav(navPanel, "\uD83D\uDD17", "Prerequisites", () -> new PrerequisitePanel());
-        addNav(navPanel, "\uD83D\uDCCA", "Reports", () -> new ReportPanel());
-        addNav(navPanel, "\uD83C\uDFAF", "Advisors", () -> new AdvisorPanel());
-        addNav(navPanel, "\uD83D\uDCCB", "Teaching", () -> new TeachingAssignmentPanel());
+        User.Role role = currentUser.getRole();
 
-        JScrollPane navScroll = new JScrollPane(navPanel);
-        navScroll.setBorder(null);
-        navScroll.getVerticalScrollBar().setUnitIncrement(16);
-        navScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        navScroll.getViewport().setBackground(UITheme.SIDEBAR_BG);
+        // Dashboard — همه می‌بینن
+        addNav(navPanel, "⌂", "Dashboard", DashboardPanel::new);
 
-        sidebar.add(navScroll, BorderLayout.CENTER);
+        if (role == User.Role.ADMIN || role == User.Role.STUDENT) {
+            addNav(navPanel, "🎓", "Students", StudentPanel::new);
+        }
+        if (role == User.Role.ADMIN || role == User.Role.INSTRUCTOR) {
+            addNav(navPanel, "📚", "Courses", CoursePanel::new);
+            addNav(navPanel, "👨‍🏫", "Instructors", InstructorPanel::new);
+        }
+        if (role == User.Role.ADMIN) {
+            addNav(navPanel, "🏤", "Departments",  DepartmentPanel::new);
+            addNav(navPanel, "🗓", "Sections",     SectionPanel::new);
+            addNav(navPanel, "✍", "Enrollment",   EnrollmentPanel::new);
+            addNav(navPanel, "🔗", "Prerequisites", PrerequisitePanel::new);
+            addNav(navPanel, "📊", "Reports",      ReportPanel::new);
+            addNav(navPanel, "🎯", "Advisors",     AdvisorPanel::new);
+            addNav(navPanel, "📋", "Teaching",     TeachingAssignmentPanel::new);
+        }
+        if (role == User.Role.STUDENT) {
+            addNav(navPanel, "✍", "My Enrollment", EnrollmentPanel::new);
+            addNav(navPanel, "📊", "My Grades",    ReportPanel::new);
+        }
+        if (role == User.Role.INSTRUCTOR) {
+            addNav(navPanel, "🗓", "My Sections",  SectionPanel::new);
+            addNav(navPanel, "📋", "My Teaching",  TeachingAssignmentPanel::new);
+        }
 
-        JLabel footer = new JLabel("<html><center>University DBMS<br><span style='color:#64748B;font-size:10px'>v1.0</span></center></html>");
+        // Logout
+        navPanel.add(Box.createVerticalStrut(16));
+        navPanel.add(makeSeparator());
+        navPanel.add(Box.createVerticalStrut(8));
+        addLogout(navPanel);
+
+        JScrollPane scroll = new JScrollPane(navPanel);
+        scroll.setBorder(null);
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.getViewport().setBackground(UITheme.SIDEBAR_BG);
+        return scroll;
+    }
+
+    private JSeparator makeSeparator() {
+        JSeparator sep = new JSeparator();
+        sep.setForeground(new Color(0x334155));
+        sep.setBackground(UITheme.SIDEBAR_BG);
+        sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        return sep;
+    }
+
+    // ── Footer ──────────────────────────────────────────────
+    private JLabel buildFooter() {
+        JLabel footer = new JLabel(
+                "<html><center>University DBMS<br>"
+                        + "<span style='color:#64748B;font-size:10px'>v1.0  •  "
+                        + currentUser.getUsername() + "</span></center></html>",
+                SwingConstants.CENTER
+        );
         footer.setForeground(UITheme.SIDEBAR_TEXT);
         footer.setFont(new Font("SansSerif", Font.PLAIN, 11));
         footer.setBorder(new EmptyBorder(12, 0, 16, 0));
-        footer.setHorizontalAlignment(SwingConstants.CENTER);
-        sidebar.add(footer, BorderLayout.SOUTH);
-
-        return sidebar;
+        return footer;
     }
 
-    private void addNav(JPanel navPanel, String icon, String label,
-                        java.util.function.Supplier<JPanel> panelSupplier) {
+    // ── Helpers ─────────────────────────────────────────────
+    private void addNav(JPanel panel, String icon, String label,
+                        Supplier<JPanel> supplier) {
         JButton btn = UIUtil.createNavButton(icon, label);
         btn.setAlignmentX(Component.LEFT_ALIGNMENT);
         btn.addActionListener(e -> {
             setActiveNav(btn);
-            showPanel(panelSupplier.get(), label);
+            // هر panel رو lazy و توی SwingWorker بساز
+            loadPanel(supplier, label);
         });
         navButtons.put(label, btn);
-        navPanel.add(btn);
-        navPanel.add(Box.createVerticalStrut(2));
+        panel.add(btn);
+        panel.add(Box.createVerticalStrut(2));
+    }
+
+    private void addLogout(JPanel panel) {
+        JButton btn = UIUtil.createNavButton("⏻", "Logout");
+        btn.setAlignmentX(Component.LEFT_ALIGNMENT);
+        btn.setForeground(new Color(0xFCA5A5));
+        btn.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Are you sure you want to logout?",
+                    "Logout",
+                    JOptionPane.YES_NO_OPTION
+            );
+            if (confirm == JOptionPane.YES_OPTION) {
+                dispose();
+                new LoginFrame();
+            }
+        });
+        panel.add(btn);
     }
 
     private void setActiveNav(JButton button) {
-        if (activeNavButton != null) {
-            UIUtil.setNavActive(activeNavButton, false);
-        }
+        if (activeNavButton != null) UIUtil.setNavActive(activeNavButton, false);
         activeNavButton = button;
         UIUtil.setNavActive(button, true);
+    }
+
+    // Lazy loading — panel رو توی thread جدا می‌سازه
+    private void loadPanel(Supplier<JPanel> supplier, String label) {
+        // یه loading indicator نشون بده
+        JPanel loading = new JPanel(new GridBagLayout());
+        loading.setBackground(UITheme.CONTENT_BG);
+        JLabel lbl = new JLabel("Loading...");
+        lbl.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        lbl.setForeground(new Color(0x94A3B8));
+        loading.add(lbl);
+        showPanel(loading, null);
+
+        SwingWorker<JPanel, Void> worker = new SwingWorker<>() {
+            @Override protected JPanel doInBackground() { return supplier.get(); }
+            @Override protected void done() {
+                try { showPanel(get(), label); }
+                catch (Exception ex) { ex.printStackTrace(); }
+            }
+        };
+        worker.execute();
     }
 
     private void showPanel(JPanel panel, String navLabel) {
@@ -134,9 +238,20 @@ public class MainDashboard extends JFrame {
         contentPanel.add(panel, BorderLayout.CENTER);
         contentPanel.revalidate();
         contentPanel.repaint();
-
-        if (navButtons.containsKey(navLabel)) {
+        if (navLabel != null && navButtons.containsKey(navLabel))
             setActiveNav(navButtons.get(navLabel));
-        }
+    }
+
+    private Color roleColor(User.Role role) {
+        return switch (role) {
+            case ADMIN      -> new Color(0x7C3AED);
+            case INSTRUCTOR -> new Color(0x0369A1);
+            case STUDENT    -> new Color(0x15803D);
+        };
+    }
+
+    private String capitalize(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return s.charAt(0) + s.substring(1).toLowerCase();
     }
 }

@@ -7,8 +7,6 @@ public class Student {
     private String deptName;
     private int totalCredits;
 
-    public Student() {
-    }
 
     public Student(int id,
                    String name,
