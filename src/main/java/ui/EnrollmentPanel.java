@@ -5,195 +5,131 @@ import dao.EnrollmentDAO;
 import dao.StudentDAO;
 import model.Course;
 import model.Student;
+import util.UITheme;
+import util.UIUtil;
+import util.ValidationUtil;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class EnrollmentPanel extends JPanel {
 
     private JComboBox<Student> studentCombo;
-
     private JComboBox<Course> courseCombo;
-
     private JTextField sectionField;
-
     private JTextField semesterField;
-
     private JTextField yearField;
-
     private JButton enrollButton;
 
     public EnrollmentPanel() {
-
         initComponents();
-
         loadStudents();
-
         loadCourses();
-
     }
 
     private void initComponents() {
 
-        JPanel panel =
-                new JPanel(
-                        new GridLayout(6, 2, 10, 10)
-                );
+        studentCombo = new JComboBox<>();
+        courseCombo = new JComboBox<>();
+        sectionField = new JTextField();
+        semesterField = new JTextField();
+        yearField = new JTextField();
 
-        panel.setBorder(
-                BorderFactory.createEmptyBorder(
-                        20,
-                        20,
-                        20,
-                        20
-                )
+        UITheme.styleComboBox(studentCombo);
+        UITheme.styleComboBox(courseCombo);
+        UITheme.styleTextField(sectionField);
+        UITheme.styleTextField(semesterField);
+        UITheme.styleTextField(yearField);
+
+        JPanel formGrid = UITheme.createFormGrid(5, 2,
+                UITheme.createFieldLabel("Student"), studentCombo,
+                UITheme.createFieldLabel("Course"), courseCombo,
+                UITheme.createFieldLabel("Section ID"), sectionField,
+                UITheme.createFieldLabel("Semester"), semesterField,
+                UITheme.createFieldLabel("Year"), yearField
         );
 
-        // Student ID
-        panel.add(
-                new JLabel("Student ID:")
-        );
+        enrollButton = UIUtil.createButton("Enroll Student", UIUtil.ButtonStyle.PRIMARY);
 
-        studentCombo =
-                new JComboBox<>();
+        JPanel leftPanel = UITheme.createCard("New Enrollment",
+                UITheme.createFormGrid(2, 1, formGrid,
+                        UITheme.createButtonBar(enrollButton)));
 
-        panel.add(studentCombo);
-        // Course ID
-        panel.add(
-                new JLabel("Course ID:")
-        );
+        setLayout(new BorderLayout());
+        setBackground(UITheme.CONTENT_BG);
+        setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
 
-        courseCombo =
-                new JComboBox<>();
+        add(UITheme.createPageHeader("Enrollment",
+                "Register students for course sections"), BorderLayout.NORTH);
 
-        panel.add(courseCombo);
+        JPanel center = new JPanel(new GridBagLayout());
+        center.setOpaque(false);
+        center.add(leftPanel);
+        add(center, BorderLayout.CENTER);
 
-        // Section ID
-        panel.add(
-                new JLabel("Section ID:")
-        );
-
-        sectionField =
-                new JTextField();
-
-        panel.add(sectionField);
-
-        // Semester
-        panel.add(
-                new JLabel("Semester:")
-        );
-
-        semesterField =
-                new JTextField();
-
-        panel.add(semesterField);
-
-        // Year
-        panel.add(
-                new JLabel("Year:")
-        );
-
-        yearField =
-                new JTextField();
-
-        panel.add(yearField);
-
-        // Button
-        enrollButton =
-                new JButton(
-                        "Enroll Student"
-                );
-
-        panel.add(enrollButton);
-
-        add(panel);
-
-        enrollButton.addActionListener(
-                e -> enrollStudent()
-        );
+        enrollButton.addActionListener(e -> enrollStudent());
     }
 
     private void enrollStudent() {
 
+        if (studentCombo.getSelectedItem() == null || courseCombo.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this, "Please select a student and course");
+            return;
+        }
+
+        if (ValidationUtil.isEmpty(sectionField.getText())
+                || ValidationUtil.isEmpty(semesterField.getText())
+                || ValidationUtil.isEmpty(yearField.getText())) {
+            JOptionPane.showMessageDialog(this, "All fields are required");
+            return;
+        }
+
+        if (!ValidationUtil.isValidSemester(semesterField.getText())) {
+            JOptionPane.showMessageDialog(this, "Semester must be Fall, Spring, or Summer");
+            return;
+        }
+
+        if (!ValidationUtil.isValidYear(yearField.getText())) {
+            JOptionPane.showMessageDialog(this, "Enter a valid year (2000–2100)");
+            return;
+        }
+
         try {
+            Student student = (Student) studentCombo.getSelectedItem();
+            Course course = (Course) courseCombo.getSelectedItem();
 
-            Student student =
-                    (Student) studentCombo.getSelectedItem();
-
-            int studentId =
-                    student.getId();
-
-            Course course =
-                    (Course) courseCombo.getSelectedItem();
-
-            String courseId =
-                    course.getCourseId();
-
-            String secId =
-                    sectionField.getText();
-
-            String semester =
-                    semesterField.getText();
-
-            int year =
-                    Integer.parseInt(
-                            yearField.getText()
-                    );
-
-            EnrollmentDAO dao =
-                    new EnrollmentDAO();
-
-            boolean enrolled =
-                    dao.enrollStudent(
-                            studentId,
-                            courseId,
-                            secId,
-                            semester,
-                            year
-                    );
+            boolean enrolled = new EnrollmentDAO().enrollStudent(
+                    student.getId(),
+                    course.getCourseId(),
+                    sectionField.getText(),
+                    semesterField.getText(),
+                    Integer.parseInt(yearField.getText())
+            );
 
             if (enrolled) {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Enrollment Successful!"
-                );
-
+                JOptionPane.showMessageDialog(this, "Enrollment successful!");
+                sectionField.setText("");
+                semesterField.setText("");
+                yearField.setText("");
             } else {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Enrollment Failed!"
-                );
+                JOptionPane.showMessageDialog(this, "Enrollment failed");
             }
 
         } catch (Exception e) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage()
-            );
+            JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }
 
     private void loadStudents() {
-
-        StudentDAO dao =
-                new StudentDAO();
-
-        for (Student student :
-                dao.getAllStudents()) {
-
+        studentCombo.removeAllItems();
+        for (Student student : new StudentDAO().getAllStudents()) {
             studentCombo.addItem(student);
         }
     }
+
     private void loadCourses() {
-
-        CourseDAO dao =
-                new CourseDAO();
-
-        for (Course course :
-                dao.getAllCourses()) {
-
+        courseCombo.removeAllItems();
+        for (Course course : new CourseDAO().getAllCourses()) {
             courseCombo.addItem(course);
         }
     }

@@ -6,6 +6,8 @@ import dao.TeachingAssignmentDAO;
 import model.Course;
 import model.Instructor;
 import model.TeachingAssignment;
+import util.UITheme;
+import util.UIUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,231 +16,113 @@ import java.awt.*;
 public class TeachingAssignmentPanel extends JPanel {
 
     private JComboBox<Instructor> instructorCombo;
-
     private JComboBox<Course> courseCombo;
-
     private JTextField sectionField;
-
     private JTextField semesterField;
-
     private JTextField yearField;
-
     private JButton assignButton;
-
     private JButton loadButton;
-
     private JTable table;
-
     private DefaultTableModel tableModel;
-
     private JButton deleteButton;
-
     private JTextField searchField;
-
     private JButton searchButton;
 
     public TeachingAssignmentPanel() {
-
         initComponents();
-
         loadData();
-
         loadAssignments();
-
     }
 
     private void initComponents() {
 
-        setLayout(new BorderLayout());
+        instructorCombo = new JComboBox<>();
+        courseCombo = new JComboBox<>();
+        sectionField = new JTextField();
+        semesterField = new JTextField();
+        yearField = new JTextField();
+        searchField = new JTextField();
 
-        JPanel panel =
-                new JPanel(
-                        new GridLayout(8, 2, 10, 10)
-                );
+        UITheme.styleComboBox(instructorCombo);
+        UITheme.styleComboBox(courseCombo);
+        UITheme.styleTextField(sectionField);
+        UITheme.styleTextField(semesterField);
+        UITheme.styleTextField(yearField);
+        UITheme.styleTextField(searchField);
 
-        instructorCombo =
-                new JComboBox<>();
-
-        courseCombo =
-                new JComboBox<>();
-
-        sectionField =
-                new JTextField();
-
-        semesterField =
-                new JTextField();
-
-        yearField =
-                new JTextField();
-
-        panel.add(new JLabel("Instructor"));
-        panel.add(instructorCombo);
-
-        panel.add(new JLabel("Course"));
-        panel.add(courseCombo);
-
-        panel.add(new JLabel("Section"));
-        panel.add(sectionField);
-
-        panel.add(new JLabel("Semester"));
-        panel.add(semesterField);
-
-        panel.add(new JLabel("Year"));
-        panel.add(yearField);
-
-        assignButton =
-                new JButton("Assign");
-
-        loadButton =
-                new JButton("Load");
-
-        deleteButton =
-                new JButton("Delete");
-
-        searchButton =
-                new JButton("Search");
-
-        searchField =
-                new JTextField();
-
-        panel.add(assignButton);
-        panel.add(loadButton);
-        panel.add(deleteButton);
-        panel.add(searchButton);
-
-        add(panel, BorderLayout.NORTH);
-
-        JPanel searchPanel =
-                new JPanel(
-                        new BorderLayout()
-                );
-
-        searchPanel.add(
-                new JLabel("Instructor ID"),
-                BorderLayout.WEST
+        JPanel formGrid = UITheme.createFormGrid(5, 2,
+                UITheme.createFieldLabel("Instructor"), instructorCombo,
+                UITheme.createFieldLabel("Course"), courseCombo,
+                UITheme.createFieldLabel("Section"), sectionField,
+                UITheme.createFieldLabel("Semester"), semesterField,
+                UITheme.createFieldLabel("Year"), yearField
         );
 
-        searchPanel.add(
-                searchField,
-                BorderLayout.CENTER
-        );
+        assignButton = UIUtil.createButton("Assign", UIUtil.ButtonStyle.PRIMARY);
+        loadButton = UIUtil.createButton("Refresh", UIUtil.ButtonStyle.SECONDARY);
+        deleteButton = UIUtil.createButton("Delete", UIUtil.ButtonStyle.DANGER);
+        searchButton = UIUtil.createButton("Search", UIUtil.ButtonStyle.GHOST);
 
-        add(
-                searchPanel,
-                BorderLayout.SOUTH
-        );
+        JPanel searchRow = new JPanel(new BorderLayout(8, 0));
+        searchRow.setOpaque(false);
+        searchRow.add(UITheme.createFieldLabel("Filter by Instructor ID"), BorderLayout.WEST);
+        searchRow.add(searchField, BorderLayout.CENTER);
 
-        tableModel =
-                new DefaultTableModel(
-                        new String[]{
-                                "Instructor ID",
-                                "Course",
-                                "Section",
-                                "Semester",
-                                "Year"
-                        },
-                        0
-                );
+        JPanel leftContent = new JPanel();
+        leftContent.setLayout(new BoxLayout(leftContent, BoxLayout.Y_AXIS));
+        leftContent.setOpaque(false);
+        leftContent.add(formGrid);
+        leftContent.add(Box.createVerticalStrut(12));
+        leftContent.add(searchRow);
+        leftContent.add(Box.createVerticalStrut(12));
+        leftContent.add(UITheme.createButtonBar(assignButton, deleteButton, loadButton, searchButton));
 
-        table =
-                new JTable(tableModel);
+        JPanel leftPanel = UITheme.createCard("Teaching Assignment", leftContent);
 
-        add(
-                new JScrollPane(table),
-                BorderLayout.CENTER
-        );
+        tableModel = new DefaultTableModel(
+                new String[]{"Instructor ID", "Course", "Section", "Semester", "Year"}, 0);
+        table = new JTable(tableModel);
 
-        assignButton.addActionListener(
-                e -> assignInstructor()
-        );
+        UITheme.wrapContent(this, "Teaching Assignments",
+                "Assign instructors to course sections",
+                leftPanel, table);
 
-        loadButton.addActionListener(
-                e -> loadAssignments()
-        );
-
-        deleteButton.addActionListener(
-                e -> deleteAssignment()
-        );
-
-        searchButton.addActionListener(
-                e -> searchAssignments()
-        );
+        assignButton.addActionListener(e -> assignInstructor());
+        loadButton.addActionListener(e -> loadAssignments());
+        deleteButton.addActionListener(e -> deleteAssignment());
+        searchButton.addActionListener(e -> searchAssignments());
     }
 
     private void loadData() {
-
-        for (
-                Instructor instructor :
-                new InstructorDAO()
-                        .getAllInstructors()
-        ) {
-
-            instructorCombo.addItem(
-                    instructor
-            );
+        for (Instructor instructor : new InstructorDAO().getAllInstructors()) {
+            instructorCombo.addItem(instructor);
         }
-
-        for (
-                Course course :
-                new CourseDAO()
-                        .getAllCourses()
-        ) {
-
-            courseCombo.addItem(
-                    course
-            );
+        for (Course course : new CourseDAO().getAllCourses()) {
+            courseCombo.addItem(course);
         }
     }
 
     private void assignInstructor() {
 
-        Instructor instructor =
-                (Instructor)
-                        instructorCombo.getSelectedItem();
+        Instructor instructor = (Instructor) instructorCombo.getSelectedItem();
+        Course course = (Course) courseCombo.getSelectedItem();
 
-        Course course =
-                (Course)
-                        courseCombo.getSelectedItem();
+        if (instructor == null || course == null) return;
 
-        TeachingAssignmentDAO dao =
-                new TeachingAssignmentDAO();
+        TeachingAssignmentDAO dao = new TeachingAssignmentDAO();
 
-        if (
-                dao.exists(
-                        instructor.getId(),
-                        course.getCourseId(),
-                        sectionField.getText(),
-                        semesterField.getText(),
-                        Integer.parseInt(
-                                yearField.getText()
-                        )
-                )
-        ) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Assignment already exists"
-            );
+        int year = Integer.parseInt(yearField.getText());
+
+        if (dao.exists(instructor.getId(), course.getCourseId(),
+                sectionField.getText(), semesterField.getText(), year)) {
+            JOptionPane.showMessageDialog(this, "Assignment already exists");
             return;
         }
 
-        boolean result =
-                new TeachingAssignmentDAO()
-                        .assignInstructor(
-                                instructor.getId(),
-                                course.getCourseId(),
-                                sectionField.getText(),
-                                semesterField.getText(),
-                                Integer.parseInt(
-                                        yearField.getText()
-                                )
-                        );
-
-        if (result) {
-
+        if (dao.assignInstructor(instructor.getId(), course.getCourseId(),
+                sectionField.getText(), semesterField.getText(), year)) {
             loadAssignments();
-
             clearFields();
-
         }
     }
 
@@ -246,129 +130,57 @@ public class TeachingAssignmentPanel extends JPanel {
 
         tableModel.setRowCount(0);
 
-        for (
-                TeachingAssignment assignment :
-                new TeachingAssignmentDAO()
-                        .getAllAssignments()
-        ) {
-
-            tableModel.addRow(
-                    new Object[]{
-                            assignment.getInstructorId(),
-                            assignment.getCourseId(),
-                            assignment.getSecId(),
-                            assignment.getSemester(),
-                            assignment.getYear()
-                    }
-            );
+        for (TeachingAssignment a : new TeachingAssignmentDAO().getAllAssignments()) {
+            tableModel.addRow(new Object[]{
+                    a.getInstructorId(), a.getCourseId(),
+                    a.getSecId(), a.getSemester(), a.getYear()
+            });
         }
     }
 
     private void deleteAssignment() {
 
-        int row =
-                table.getSelectedRow();
+        int row = table.getSelectedRow();
+        if (row == -1) return;
 
-        if(row == -1){
+        boolean deleted = new TeachingAssignmentDAO().deleteAssignment(
+                Integer.parseInt(tableModel.getValueAt(row, 0).toString()),
+                tableModel.getValueAt(row, 1).toString(),
+                tableModel.getValueAt(row, 2).toString(),
+                tableModel.getValueAt(row, 3).toString(),
+                Integer.parseInt(tableModel.getValueAt(row, 4).toString())
+        );
 
-            return;
-        }
-
-        boolean deleted =
-                new TeachingAssignmentDAO()
-                        .deleteAssignment(
-
-                                Integer.parseInt(
-                                        tableModel.getValueAt(
-                                                row,
-                                                0
-                                        ).toString()
-                                ),
-
-                                tableModel.getValueAt(
-                                        row,
-                                        1
-                                ).toString(),
-
-                                tableModel.getValueAt(
-                                        row,
-                                        2
-                                ).toString(),
-
-                                tableModel.getValueAt(
-                                        row,
-                                        3
-                                ).toString(),
-
-                                Integer.parseInt(
-                                        tableModel.getValueAt(
-                                                row,
-                                                4
-                                        ).toString()
-                                )
-                        );
-
-        if(deleted){
-
+        if (deleted) {
             loadAssignments();
-
             clearFields();
-
         }
     }
 
     private void searchAssignments() {
 
-        String instructorId =
-                searchField.getText();
+        String instructorId = searchField.getText();
 
-        if(instructorId.isEmpty()) {
-
+        if (instructorId.isEmpty()) {
             loadAssignments();
-
             return;
         }
 
         tableModel.setRowCount(0);
 
-        for (
-
-                TeachingAssignment assignment :
-
-                new TeachingAssignmentDAO()
-                        .getAllAssignments()
-
-        ) {
-
-            if(
-
-                    String.valueOf(
-                                    assignment.getInstructorId()
-                            )
-                            .equals(instructorId)
-
-            ){
-
-                tableModel.addRow(
-                        new Object[]{
-                                assignment.getInstructorId(),
-                                assignment.getCourseId(),
-                                assignment.getSecId(),
-                                assignment.getSemester(),
-                                assignment.getYear()
-                        }
-                );
+        for (TeachingAssignment a : new TeachingAssignmentDAO().getAllAssignments()) {
+            if (String.valueOf(a.getInstructorId()).equals(instructorId)) {
+                tableModel.addRow(new Object[]{
+                        a.getInstructorId(), a.getCourseId(),
+                        a.getSecId(), a.getSemester(), a.getYear()
+                });
             }
         }
     }
 
     private void clearFields() {
-
         sectionField.setText("");
-
         semesterField.setText("");
-
         yearField.setText("");
-
     }
 }

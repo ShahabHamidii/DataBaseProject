@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 import util.ValidationUtil;
+import util.UITheme;
+import util.UIUtil;
 
 public class InstructorPanel extends JPanel {
 
@@ -35,111 +37,50 @@ public class InstructorPanel extends JPanel {
 
     private void initComponents() {
 
-        setLayout(new BorderLayout());
-
-        JPanel panel =
-                new JPanel(
-                        new GridLayout(8, 2, 10, 10)
-                );
-
         idField = new JTextField();
         nameField = new JTextField();
         deptField = new JTextField();
         salaryField = new JTextField();
-        searchField =
-                new JTextField();
+        searchField = new JTextField();
 
+        UITheme.styleTextField(idField);
+        UITheme.styleTextField(nameField);
+        UITheme.styleTextField(deptField);
+        UITheme.styleTextField(salaryField);
+        UITheme.styleTextField(searchField);
 
-        panel.add(new JLabel("ID"));
-        panel.add(idField);
-
-        panel.add(new JLabel("Name"));
-        panel.add(nameField);
-
-        panel.add(new JLabel("Department"));
-        panel.add(deptField);
-
-        panel.add(new JLabel("Salary"));
-        panel.add(salaryField);
-
-        panel.add(new JLabel("Search By ID"));
-        panel.add(searchField);
-
-        addButton =
-                new JButton("Add");
-
-        loadButton =
-                new JButton("Load");
-
-        updateButton =
-                new JButton("Update");
-
-        deleteButton =
-                new JButton("Delete");
-
-        searchButton =
-                new JButton("Search");
-        searchButton.addActionListener(
-                e -> searchInstructor()
+        JPanel formGrid = UITheme.createFormGrid(5, 2,
+                UITheme.createFieldLabel("ID"), idField,
+                UITheme.createFieldLabel("Name"), nameField,
+                UITheme.createFieldLabel("Department"), deptField,
+                UITheme.createFieldLabel("Salary"), salaryField,
+                UITheme.createFieldLabel("Search By ID"), searchField
         );
 
-        panel.add(addButton);
-        panel.add(loadButton);
+        addButton = UIUtil.createButton("Add", UIUtil.ButtonStyle.SUCCESS);
+        loadButton = UIUtil.createButton("Refresh", UIUtil.ButtonStyle.SECONDARY);
+        updateButton = UIUtil.createButton("Update", UIUtil.ButtonStyle.PRIMARY);
+        deleteButton = UIUtil.createButton("Delete", UIUtil.ButtonStyle.DANGER);
+        searchButton = UIUtil.createButton("Search", UIUtil.ButtonStyle.GHOST);
 
-        panel.add(updateButton);
-        panel.add(deleteButton);
+        JPanel leftPanel = UITheme.createCard("Instructor Details",
+                UITheme.createFormGrid(2, 1, formGrid,
+                        UITheme.createButtonBar(addButton, updateButton, deleteButton, loadButton, searchButton)));
 
-        panel.add(searchButton);
-        panel.add(new JLabel());
+        tableModel = new DefaultTableModel(
+                new String[]{"ID", "Name", "Department", "Salary"}, 0);
+        table = new JTable(tableModel);
 
-        add(panel, BorderLayout.NORTH);
+        UITheme.wrapContent(this, "Instructors",
+                "Manage faculty members and their departments",
+                leftPanel, table);
 
-        tableModel =
-                new DefaultTableModel(
-                        new String[]{
-                                "ID",
-                                "Name",
-                                "Department",
-                                "Salary"
-                        },
-                        0
-                );
-
-        table =
-                new JTable(tableModel);
-
-        table.setRowHeight(30);
-
-        table.setAutoCreateRowSorter(true);
-
-        table.getTableHeader()
-                .setReorderingAllowed(false);
-
-        add(
-                new JScrollPane(table),
-                BorderLayout.CENTER
-        );
-
-        addButton.addActionListener(
-                e -> addInstructor()
-        );
-
-        loadButton.addActionListener(
-                e -> loadInstructors()
-        );
-
-        updateButton.addActionListener(
-                e -> updateInstructor()
-        );
-
-        deleteButton.addActionListener(
-                e -> deleteInstructor()
-        );
-
-        table.getSelectionModel()
-                .addListSelectionListener(
-                        e -> fillFormFromTable()
-                );
+        addButton.addActionListener(e -> addInstructor());
+        loadButton.addActionListener(e -> loadInstructors());
+        updateButton.addActionListener(e -> updateInstructor());
+        deleteButton.addActionListener(e -> deleteInstructor());
+        searchButton.addActionListener(e -> searchInstructor());
+        table.getSelectionModel().addListSelectionListener(e -> fillFormFromTable());
     }
 
     private void addInstructor() {

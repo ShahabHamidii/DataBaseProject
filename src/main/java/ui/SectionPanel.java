@@ -3,6 +3,8 @@ package ui;
 import dao.SectionDAO;
 import model.Section;
 import util.ValidationUtil;
+import util.UITheme;
+import util.UIUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -43,13 +45,6 @@ public class SectionPanel extends JPanel {
 
     private void initComponents() {
 
-        setLayout(new BorderLayout());
-
-        JPanel panel =
-                new JPanel(
-                        new GridLayout(10, 2)
-                );
-
         courseIdField = new JTextField();
         secIdField = new JTextField();
         semesterField = new JTextField();
@@ -57,108 +52,52 @@ public class SectionPanel extends JPanel {
         buildingField = new JTextField();
         roomField = new JTextField();
         timeSlotField = new JTextField();
+        searchField = new JTextField();
 
-        panel.add(new JLabel("Course ID"));
-        panel.add(courseIdField);
+        UITheme.styleTextField(courseIdField);
+        UITheme.styleTextField(secIdField);
+        UITheme.styleTextField(semesterField);
+        UITheme.styleTextField(yearField);
+        UITheme.styleTextField(buildingField);
+        UITheme.styleTextField(roomField);
+        UITheme.styleTextField(timeSlotField);
+        UITheme.styleTextField(searchField);
 
-        panel.add(new JLabel("Section ID"));
-        panel.add(secIdField);
-
-        panel.add(new JLabel("Semester"));
-        panel.add(semesterField);
-
-        panel.add(new JLabel("Year"));
-        panel.add(yearField);
-
-        panel.add(new JLabel("Building"));
-        panel.add(buildingField);
-
-        panel.add(new JLabel("Room"));
-        panel.add(roomField);
-
-        panel.add(new JLabel("Time Slot"));
-        panel.add(timeSlotField);
-
-        addButton =
-                new JButton("Add");
-
-        loadButton =
-                new JButton("Load");
-
-        updateButton =
-                new JButton("Update");
-
-        deleteButton =
-                new JButton("Delete");
-
-        searchButton =
-                new JButton("Search");
-
-        searchField =
-                new JTextField();
-
-        panel.add(addButton);
-        panel.add(loadButton);
-        panel.add(updateButton);
-        panel.add(deleteButton);
-        panel.add(searchButton);
-        panel.add(searchField);
-
-        add(panel, BorderLayout.NORTH);
-
-        tableModel =
-                new DefaultTableModel(
-                        new String[]{
-                                "Course",
-                                "Section",
-                                "Semester",
-                                "Year",
-                                "Building",
-                                "Room",
-                                "Time Slot"
-                        },
-                        0
-                );
-
-        table =
-                new JTable(tableModel);
-        
-        table.setRowHeight(30);
-
-        table.setAutoCreateRowSorter(true);
-
-        table.getTableHeader()
-                .setReorderingAllowed(false);
-
-        add(
-                new JScrollPane(table),
-                BorderLayout.CENTER
+        JPanel formGrid = UITheme.createFormGrid(8, 2,
+                UITheme.createFieldLabel("Course ID"), courseIdField,
+                UITheme.createFieldLabel("Section ID"), secIdField,
+                UITheme.createFieldLabel("Semester"), semesterField,
+                UITheme.createFieldLabel("Year"), yearField,
+                UITheme.createFieldLabel("Building"), buildingField,
+                UITheme.createFieldLabel("Room"), roomField,
+                UITheme.createFieldLabel("Time Slot"), timeSlotField,
+                UITheme.createFieldLabel("Search Course"), searchField
         );
 
-        addButton.addActionListener(
-                e -> addSection()
-        );
+        addButton = UIUtil.createButton("Add", UIUtil.ButtonStyle.SUCCESS);
+        loadButton = UIUtil.createButton("Refresh", UIUtil.ButtonStyle.SECONDARY);
+        updateButton = UIUtil.createButton("Update", UIUtil.ButtonStyle.PRIMARY);
+        deleteButton = UIUtil.createButton("Delete", UIUtil.ButtonStyle.DANGER);
+        searchButton = UIUtil.createButton("Search", UIUtil.ButtonStyle.GHOST);
 
-        loadButton.addActionListener(
-                e -> loadSections()
-        );
+        JPanel leftPanel = UITheme.createCard("Section Details",
+                UITheme.createFormGrid(2, 1, formGrid,
+                        UITheme.createButtonBar(addButton, updateButton, deleteButton, loadButton, searchButton)));
 
-        updateButton.addActionListener(
-                e -> updateSection()
-        );
+        tableModel = new DefaultTableModel(
+                new String[]{"Course", "Section", "Semester", "Year", "Building", "Room", "Time Slot"}, 0);
+        table = new JTable(tableModel);
 
-        deleteButton.addActionListener(
-                e -> deleteSection()
-        );
+        UITheme.wrapContent(this, "Sections",
+                "Manage course sections, rooms, and schedules",
+                leftPanel, table);
 
-        table.getSelectionModel()
-                .addListSelectionListener(
-                        e -> fillFormFromTable()
-                );
-        searchButton.addActionListener(
-                e -> searchSections()
-        );
-
+        addButton.addActionListener(e -> addSection());
+        loadButton.addActionListener(e -> loadSections());
+        updateButton.addActionListener(e -> updateSection());
+        deleteButton.addActionListener(e -> deleteSection());
+        searchButton.addActionListener(e -> searchSections());
+        table.getSelectionModel().addListSelectionListener(e -> fillFormFromTable());
     }
 
     private void addSection() {

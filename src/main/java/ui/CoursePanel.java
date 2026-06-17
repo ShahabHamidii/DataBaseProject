@@ -10,6 +10,7 @@ import java.util.List;
 
 import util.ValidationUtil;
 import util.UITheme;
+import util.UIUtil;
 
 public class CoursePanel extends JPanel {
 
@@ -46,96 +47,11 @@ public class CoursePanel extends JPanel {
 
     private void initComponents() {
 
-//        UITheme.styleFrame(this);
-
-        setLayout(new BorderLayout());
-
-        JLabel title =
-                new JLabel(
-                        "course Management"
-                );
-
-        title.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        28
-                )
-        );
-
-        title.setBorder(
-                BorderFactory.createEmptyBorder(
-                        20,
-                        20,
-                        20,
-                        20
-                )
-        );
-
-
-        JPanel formPanel =
-                new JPanel(
-                        new GridLayout(8, 2, 10, 10)
-                );
-
-        formPanel.setBorder(
-                BorderFactory.createEmptyBorder(
-                        10,
-                        10,
-                        10,
-                        10
-                )
-        );
-
-        // Course ID
-        formPanel.add(
-                new JLabel("Course ID:")
-        );
-
-        idField =
-                new JTextField();
-
-        formPanel.add(idField);
-
-        // Title
-        formPanel.add(
-                new JLabel("Title:")
-        );
-
-        titleField =
-                new JTextField();
-
-        formPanel.add(titleField);
-
-        // Department
-        formPanel.add(
-                new JLabel("Department:")
-        );
-
-        deptField =
-                new JTextField();
-
-        formPanel.add(deptField);
-
-        // Credits
-        formPanel.add(
-                new JLabel("Credits:")
-        );
-
-        creditsField =
-                new JTextField();
-
-        formPanel.add(creditsField);
-
-        // Search
-        formPanel.add(
-                new JLabel("Search Department:")
-        );
-
-        searchField =
-                new JTextField();
-
-        formPanel.add(searchField);
+        idField = new JTextField();
+        titleField = new JTextField();
+        deptField = new JTextField();
+        creditsField = new JTextField();
+        searchField = new JTextField();
 
         UITheme.styleTextField(idField);
         UITheme.styleTextField(titleField);
@@ -143,105 +59,38 @@ public class CoursePanel extends JPanel {
         UITheme.styleTextField(creditsField);
         UITheme.styleTextField(searchField);
 
-
-        // Buttons
-        addButton =
-                new JButton("Add");
-
-        updateButton =
-                new JButton("Update");
-
-        deleteButton =
-                new JButton("Delete");
-
-        loadButton =
-                new JButton("Load");
-
-        searchButton =
-                new JButton("Search");
-
-        formPanel.add(addButton);
-
-        formPanel.add(updateButton);
-
-        formPanel.add(deleteButton);
-
-        formPanel.add(loadButton);
-
-        formPanel.add(searchButton);
-
-        // Table
-        String[] columns = {
-                "Course ID",
-                "Title",
-                "Department",
-                "Credits"
-        };
-
-        tableModel =
-                new DefaultTableModel(columns, 0);
-
-        table =
-                new JTable(tableModel);
-
-        table.setRowHeight(30);
-
-        table.setAutoCreateRowSorter(true);
-
-        table.getTableHeader()
-                .setReorderingAllowed(false);
-
-        JScrollPane scrollPane =
-                new JScrollPane(table);
-
-        UITheme.styleTable(table);
-
-        JPanel northPanel =
-                new JPanel(
-                        new BorderLayout()
-                );
-
-        northPanel.add(
-                title,
-                BorderLayout.NORTH
+        JPanel formGrid = UITheme.createFormGrid(5, 2,
+                UITheme.createFieldLabel("Course ID"), idField,
+                UITheme.createFieldLabel("Title"), titleField,
+                UITheme.createFieldLabel("Department"), deptField,
+                UITheme.createFieldLabel("Credits"), creditsField,
+                UITheme.createFieldLabel("Search Department"), searchField
         );
 
-        northPanel.add(
-                formPanel,
-                BorderLayout.CENTER
-        );
+        addButton = UIUtil.createButton("Add", UIUtil.ButtonStyle.SUCCESS);
+        updateButton = UIUtil.createButton("Update", UIUtil.ButtonStyle.PRIMARY);
+        deleteButton = UIUtil.createButton("Delete", UIUtil.ButtonStyle.DANGER);
+        loadButton = UIUtil.createButton("Refresh", UIUtil.ButtonStyle.SECONDARY);
+        searchButton = UIUtil.createButton("Search", UIUtil.ButtonStyle.GHOST);
 
-        add(
-                northPanel,
-                BorderLayout.NORTH
-        );
-        add(scrollPane, BorderLayout.CENTER);
+        JPanel leftPanel = UITheme.createCard("Course Details",
+                UITheme.createFormGrid(2, 1, formGrid,
+                        UITheme.createButtonBar(addButton, updateButton, deleteButton, loadButton, searchButton)));
 
-        // Actions
-        addButton.addActionListener(
-                e -> addCourse()
-        );
+        tableModel = new DefaultTableModel(
+                new String[]{"Course ID", "Title", "Department", "Credits"}, 0);
+        table = new JTable(tableModel);
 
-        updateButton.addActionListener(
-                e -> updateCourse()
-        );
+        UITheme.wrapContent(this, "Courses",
+                "Manage course catalog and filter by department",
+                leftPanel, table);
 
-        deleteButton.addActionListener(
-                e -> deleteCourse()
-        );
-
-        loadButton.addActionListener(
-                e -> loadCourses()
-        );
-
-        searchButton.addActionListener(
-                e -> searchCourses()
-        );
-
-        table.getSelectionModel()
-                .addListSelectionListener(
-                        e -> fillFormFromTable()
-                );
+        addButton.addActionListener(e -> addCourse());
+        updateButton.addActionListener(e -> updateCourse());
+        deleteButton.addActionListener(e -> deleteCourse());
+        loadButton.addActionListener(e -> loadCourses());
+        searchButton.addActionListener(e -> searchCourses());
+        table.getSelectionModel().addListSelectionListener(e -> fillFormFromTable());
     }
 
     private void addCourse() {

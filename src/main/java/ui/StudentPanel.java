@@ -39,181 +39,53 @@ public class StudentPanel extends JPanel {
     }
     private void initComponents() {
 
-//        UITheme.styleFrame(this);
-
-        setLayout(new BorderLayout());
-
-        JLabel title =
-                new JLabel(
-                        "Student Management"
-                );
-
-        title.setFont(
-                new Font(
-                        "SansSerif",
-                        Font.BOLD,
-                        28
-                )
-        );
-
-        title.setBorder(
-                BorderFactory.createEmptyBorder(
-                        20,
-                        20,
-                        20,
-                        20
-                )
-        );
-
-
-
-        JPanel formPanel =
-                new JPanel(
-                        new GridLayout(0, 2, 10, 10)
-                );
-
-        formPanel.setBorder(
-                BorderFactory.createEmptyBorder(
-                        10,
-                        10,
-                        10,
-                        10
-                )
-        );
-
-        formPanel.add(new JLabel("Student ID:"));
         idField = new JTextField();
-        formPanel.add(idField);
-
-
-        formPanel.add(new JLabel("Name:"));
         nameField = new JTextField();
-        formPanel.add(nameField);
-
-
-        formPanel.add(new JLabel("Department:"));
         deptField = new JTextField();
-
-
-        formPanel.add(deptField);
-        formPanel.add(new JLabel("Total Credits:"));
         creditField = new JTextField();
-        formPanel.add(creditField);
-
-
-        formPanel.add(new JLabel("Search:"));
         searchField = new JTextField();
-        formPanel.add(searchField);
-
-        formPanel.add(new JLabel("Search Type:"));
         searchTypeCombo = new JComboBox<>(new String[]{"ID", "Department"});
-        formPanel.add(searchTypeCombo);
 
         UITheme.styleTextField(idField);
         UITheme.styleTextField(nameField);
         UITheme.styleTextField(deptField);
         UITheme.styleTextField(creditField);
         UITheme.styleTextField(searchField);
+        UITheme.styleComboBox(searchTypeCombo);
 
-        addButton =
-                new JButton("Add");
-
-        updateButton =
-                new JButton("Update");
-
-        deleteButton =
-                new JButton("Delete");
-
-        loadButton =
-                new JButton("Load");
-
-        searchButton =
-                new JButton("Search");
-
-        formPanel.add(searchButton);
-        formPanel.add(new JLabel());
-
-        formPanel.add(addButton);
-
-        formPanel.add(updateButton);
-
-        formPanel.add(deleteButton);
-
-        formPanel.add(loadButton);
-
-        UIUtil.styleButton(addButton);
-
-        UIUtil.styleButton(updateButton);
-
-        UIUtil.styleButton(deleteButton);
-
-        UIUtil.styleButton(loadButton);
-
-        UIUtil.styleButton(searchButton);
-
-        // Table
-        String[] columns = {
-                "ID",
-                "Name",
-                "Department",
-                "Credits"
-        };
-
-        tableModel =
-                new DefaultTableModel(columns, 0);
-
-        table =
-                new JTable(tableModel);
-
-        UITheme.styleTable(table);
-
-        table.setRowHeight(30);
-
-        table.setAutoCreateRowSorter(true);
-
-        table.getTableHeader()
-                .setReorderingAllowed(false);
-
-        JScrollPane scrollPane =
-                new JScrollPane(table);
-
-        // Add to frame
-
-        JPanel northPanel = new JPanel(new BorderLayout());
-
-        northPanel.add(title, BorderLayout.NORTH);
-        northPanel.add(formPanel, BorderLayout.CENTER);
-
-        add(
-                northPanel,
-                BorderLayout.NORTH
-        );
-        add(scrollPane, BorderLayout.CENTER);
-
-        // Actions
-        addButton.addActionListener(
-                e -> addStudent()
+        JPanel formGrid = UITheme.createFormGrid(6, 2,
+                UITheme.createFieldLabel("Student ID"), idField,
+                UITheme.createFieldLabel("Name"), nameField,
+                UITheme.createFieldLabel("Department"), deptField,
+                UITheme.createFieldLabel("Total Credits"), creditField,
+                UITheme.createFieldLabel("Search"), searchField,
+                UITheme.createFieldLabel("Search Type"), searchTypeCombo
         );
 
-        updateButton.addActionListener(
-                e -> updateStudent()
-        );
+        addButton = UIUtil.createButton("Add", UIUtil.ButtonStyle.SUCCESS);
+        updateButton = UIUtil.createButton("Update", UIUtil.ButtonStyle.PRIMARY);
+        deleteButton = UIUtil.createButton("Delete", UIUtil.ButtonStyle.DANGER);
+        loadButton = UIUtil.createButton("Refresh", UIUtil.ButtonStyle.SECONDARY);
+        searchButton = UIUtil.createButton("Search", UIUtil.ButtonStyle.GHOST);
 
-        deleteButton.addActionListener(
-                e -> deleteStudent()
-        );
+        JPanel leftPanel = UITheme.createCard("Student Details",
+                UITheme.createFormGrid(2, 1, formGrid,
+                        UITheme.createButtonBar(addButton, updateButton, deleteButton, loadButton, searchButton)));
 
-        loadButton.addActionListener(
-                e -> loadStudents()
-        );
-        searchButton.addActionListener(
-                e -> searchStudent()
-        );
+        tableModel = new DefaultTableModel(
+                new String[]{"ID", "Name", "Department", "Credits"}, 0);
+        table = new JTable(tableModel);
 
-        table.getSelectionModel()
-                .addListSelectionListener(
-                        e -> fillFormFromTable()
-                );
+        UITheme.wrapContent(this, "Students",
+                "Manage student records and search by ID or department",
+                leftPanel, table);
+
+        addButton.addActionListener(e -> addStudent());
+        updateButton.addActionListener(e -> updateStudent());
+        deleteButton.addActionListener(e -> deleteStudent());
+        loadButton.addActionListener(e -> loadStudents());
+        searchButton.addActionListener(e -> searchStudent());
+        table.getSelectionModel().addListSelectionListener(e -> fillFormFromTable());
     }
 
     private void addStudent() {

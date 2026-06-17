@@ -2,6 +2,8 @@ package ui;
 
 import dao.DepartmentDAO;
 import model.Department;
+import util.UITheme;
+import util.UIUtil;
 import util.ValidationUtil;
 
 import javax.swing.*;
@@ -15,7 +17,6 @@ public class DepartmentPanel extends JPanel {
     private JTextField budgetField;
 
     private JTable table;
-
     private DefaultTableModel tableModel;
 
     private JButton addButton;
@@ -24,164 +25,75 @@ public class DepartmentPanel extends JPanel {
     private JButton deleteButton;
 
     public DepartmentPanel() {
-
         initComponents();
-
         loadDepartments();
-
     }
 
     private void initComponents() {
 
-        setLayout(new BorderLayout());
+        nameField = new JTextField();
+        buildingField = new JTextField();
+        budgetField = new JTextField();
 
-        JPanel panel =
-                new JPanel(
-                        new GridLayout(6,2,10,10)
-                );
+        UITheme.styleTextField(nameField);
+        UITheme.styleTextField(buildingField);
+        UITheme.styleTextField(budgetField);
 
-        nameField =
-                new JTextField();
-
-        buildingField =
-                new JTextField();
-
-        budgetField =
-                new JTextField();
-
-        panel.add(
-                new JLabel("Department")
+        JPanel formGrid = UITheme.createFormGrid(3, 2,
+                UITheme.createFieldLabel("Department"), nameField,
+                UITheme.createFieldLabel("Building"), buildingField,
+                UITheme.createFieldLabel("Budget"), budgetField
         );
 
-        panel.add(nameField);
+        addButton = UIUtil.createButton("Add", UIUtil.ButtonStyle.SUCCESS);
+        loadButton = UIUtil.createButton("Refresh", UIUtil.ButtonStyle.SECONDARY);
+        updateButton = UIUtil.createButton("Update", UIUtil.ButtonStyle.PRIMARY);
+        deleteButton = UIUtil.createButton("Delete", UIUtil.ButtonStyle.DANGER);
 
-        panel.add(
-                new JLabel("Building")
-        );
+        JPanel leftPanel = UITheme.createCard("Department Details",
+                UITheme.createFormGrid(2, 1, formGrid,
+                        UITheme.createButtonBar(addButton, updateButton, deleteButton, loadButton)));
 
-        panel.add(buildingField);
+        tableModel = new DefaultTableModel(
+                new String[]{"Department", "Building", "Budget"}, 0);
+        table = new JTable(tableModel);
 
-        panel.add(
-                new JLabel("Budget")
-        );
+        UITheme.wrapContent(this, "Departments",
+                "Manage academic departments and budgets",
+                leftPanel, table);
 
-        panel.add(budgetField);
-
-        addButton =
-                new JButton("Add");
-
-        loadButton =
-                new JButton("Load");
-
-        updateButton =
-                new JButton("Update");
-
-        deleteButton =
-                new JButton("Delete");
-
-        panel.add(addButton);
-        panel.add(loadButton);
-        panel.add(updateButton);
-        panel.add(deleteButton);
-
-        add(
-                panel,
-                BorderLayout.NORTH
-        );
-
-        tableModel =
-                new DefaultTableModel(
-                        new String[]{
-                                "Department",
-                                "Building",
-                                "Budget"
-                        },
-                        0
-                );
-
-        table =
-                new JTable(tableModel);
-
-        add(
-                new JScrollPane(table),
-                BorderLayout.CENTER
-        );
-
-        addButton.addActionListener(
-                e -> addDepartment()
-        );
-
-        loadButton.addActionListener(
-                e -> loadDepartments()
-        );
-
-        updateButton.addActionListener(
-                e -> updateDepartment()
-        );
-
-        deleteButton.addActionListener(
-                e -> deleteDepartment()
-        );
-
-        table.getSelectionModel()
-                .addListSelectionListener(
-                        e -> fillForm()
-                );
+        addButton.addActionListener(e -> addDepartment());
+        loadButton.addActionListener(e -> loadDepartments());
+        updateButton.addActionListener(e -> updateDepartment());
+        deleteButton.addActionListener(e -> deleteDepartment());
+        table.getSelectionModel().addListSelectionListener(e -> fillForm());
     }
 
     private void addDepartment() {
 
-        if(
-                ValidationUtil.isEmpty(
-                        nameField.getText()
-                )
-                        ||
-                        ValidationUtil.isEmpty(
-                                buildingField.getText()
-                        )
-                        ||
-                        ValidationUtil.isEmpty(
-                                budgetField.getText()
-                        )
-        ) {
+        if (ValidationUtil.isEmpty(nameField.getText())
+                || ValidationUtil.isEmpty(buildingField.getText())
+                || ValidationUtil.isEmpty(budgetField.getText())) {
 
-            JOptionPane.showMessageDialog(
-                    this,
-                    "All fields required"
-            );
-
+            JOptionPane.showMessageDialog(this, "All fields required");
             return;
         }
 
-        if(
-                !ValidationUtil.isDouble(
-                        budgetField.getText()
-                )
-        ) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Invalid budget"
-            );
-
+        if (!ValidationUtil.isDouble(budgetField.getText())) {
+            JOptionPane.showMessageDialog(this, "Invalid budget");
             return;
         }
 
-        Department department =
-                new Department(
-                        nameField.getText(),
-                        buildingField.getText(),
-                        Double.parseDouble(
-                                budgetField.getText()
-                        )
-                );
+        Department department = new Department(
+                nameField.getText(),
+                buildingField.getText(),
+                Double.parseDouble(budgetField.getText())
+        );
 
-        if(
-                new DepartmentDAO()
-                        .addDepartment(department)
-        ) {
-
+        if (new DepartmentDAO().addDepartment(department)) {
+            JOptionPane.showMessageDialog(this, "Department added successfully");
             loadDepartments();
+            clearFields();
         }
     }
 
@@ -189,86 +101,64 @@ public class DepartmentPanel extends JPanel {
 
         tableModel.setRowCount(0);
 
-        for(
-                Department department :
-                new DepartmentDAO()
-                        .getAllDepartments()
-        ) {
-
-            tableModel.addRow(
-                    new Object[]{
-                            department.getDeptName(),
-                            department.getBuilding(),
-                            department.getBudget()
-                    }
-            );
+        for (Department department : new DepartmentDAO().getAllDepartments()) {
+            tableModel.addRow(new Object[]{
+                    department.getDeptName(),
+                    department.getBuilding(),
+                    department.getBudget()
+            });
         }
     }
 
     private void updateDepartment() {
 
-        Department department =
-                new Department(
-                        nameField.getText(),
-                        buildingField.getText(),
-                        Double.parseDouble(
-                                budgetField.getText()
-                        )
-                );
+        if (ValidationUtil.isEmpty(nameField.getText())
+                || ValidationUtil.isEmpty(buildingField.getText())
+                || ValidationUtil.isEmpty(budgetField.getText())) {
 
-        if(
-                new DepartmentDAO()
-                        .updateDepartment(
-                                department
-                        )
-        ) {
+            JOptionPane.showMessageDialog(this, "All fields required");
+            return;
+        }
 
+        Department department = new Department(
+                nameField.getText(),
+                buildingField.getText(),
+                Double.parseDouble(budgetField.getText())
+        );
+
+        if (new DepartmentDAO().updateDepartment(department)) {
+            JOptionPane.showMessageDialog(this, "Department updated");
             loadDepartments();
         }
     }
 
     private void deleteDepartment() {
 
-        if(
-                new DepartmentDAO()
-                        .deleteDepartment(
-                                nameField.getText()
-                        )
-        ) {
-
-            loadDepartments();
+        if (ValidationUtil.isEmpty(nameField.getText())) {
+            JOptionPane.showMessageDialog(this, "Select a department first");
+            return;
         }
+
+        if (new DepartmentDAO().deleteDepartment(nameField.getText())) {
+            JOptionPane.showMessageDialog(this, "Department deleted");
+            loadDepartments();
+            clearFields();
+        }
+    }
+
+    private void clearFields() {
+        nameField.setText("");
+        buildingField.setText("");
+        budgetField.setText("");
     }
 
     private void fillForm() {
 
-        int row =
-                table.getSelectedRow();
+        int row = table.getSelectedRow();
+        if (row == -1) return;
 
-        if(row == -1) {
-
-            return;
-        }
-
-        nameField.setText(
-                table.getValueAt(
-                        row,
-                        0
-                ).toString()
-        );
-
-        buildingField.setText(
-                table.getValueAt(
-                        row,
-                        1
-                ).toString()
-        );
-
-        budgetField.setText(
-                table.getValueAt(
-                        row,
-                        2
-                ).toString()
-        );
+        nameField.setText(table.getValueAt(row, 0).toString());
+        buildingField.setText(table.getValueAt(row, 1).toString());
+        budgetField.setText(table.getValueAt(row, 2).toString());
     }
 }

@@ -4,6 +4,8 @@ import dao.CourseDAO;
 import dao.PrerequisiteDAO;
 import model.Course;
 import model.Prerequisite;
+import util.UITheme;
+import util.UIUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -12,151 +14,75 @@ import java.awt.*;
 public class PrerequisitePanel extends JPanel {
 
     private JComboBox<Course> courseCombo;
-
     private JComboBox<Course> prereqCombo;
-
     private JButton addButton;
-
     private JButton loadButton;
-
     private JTable table;
-
     private DefaultTableModel tableModel;
-
     private JButton deleteButton;
-
     private JButton searchButton;
-
     private JTextField searchField;
 
     public PrerequisitePanel() {
-
         initComponents();
-
+        loadCourses();
         loadPrerequisites();
-
     }
 
     private void initComponents() {
 
-        setLayout(new BorderLayout());
+        courseCombo = new JComboBox<>();
+        prereqCombo = new JComboBox<>();
+        searchField = new JTextField();
 
-        JPanel panel =
-                new JPanel(
-                        new GridLayout(2,3,10,10)
-                );
+        UITheme.styleComboBox(courseCombo);
+        UITheme.styleComboBox(prereqCombo);
+        UITheme.styleTextField(searchField);
 
-        courseCombo =
-                new JComboBox<>();
-
-        prereqCombo =
-                new JComboBox<>();
-
-        addButton =
-                new JButton("Add");
-
-        loadButton =
-                new JButton("Load");
-
-        deleteButton =
-                new JButton("Delete");
-
-        searchButton =
-                new JButton("Search");
-
-        searchField =
-                new JTextField();
-
-        panel.add(
-                new JLabel("Course")
+        JPanel formGrid = UITheme.createFormGrid(2, 2,
+                UITheme.createFieldLabel("Course"), courseCombo,
+                UITheme.createFieldLabel("Prerequisite"), prereqCombo
         );
 
-        panel.add(
-                new JLabel("Prerequisite")
-        );
+        addButton = UIUtil.createButton("Add", UIUtil.ButtonStyle.SUCCESS);
+        loadButton = UIUtil.createButton("Refresh", UIUtil.ButtonStyle.SECONDARY);
+        deleteButton = UIUtil.createButton("Delete", UIUtil.ButtonStyle.DANGER);
+        searchButton = UIUtil.createButton("Search", UIUtil.ButtonStyle.GHOST);
 
-        panel.add(
-                new JLabel("")
-        );
+        JPanel searchRow = new JPanel(new BorderLayout(8, 0));
+        searchRow.setOpaque(false);
+        searchRow.add(UITheme.createFieldLabel("Filter by Course ID"), BorderLayout.WEST);
+        searchRow.add(searchField, BorderLayout.CENTER);
 
-        panel.add(courseCombo);
+        JPanel leftContent = new JPanel();
+        leftContent.setLayout(new BoxLayout(leftContent, BoxLayout.Y_AXIS));
+        leftContent.setOpaque(false);
+        leftContent.add(formGrid);
+        leftContent.add(Box.createVerticalStrut(12));
+        leftContent.add(searchRow);
+        leftContent.add(Box.createVerticalStrut(12));
+        leftContent.add(UITheme.createButtonBar(addButton, deleteButton, loadButton, searchButton));
 
-        panel.add(prereqCombo);
+        JPanel leftPanel = UITheme.createCard("Prerequisite Rules", leftContent);
 
-        JPanel buttonPanel =
-                new JPanel();
+        tableModel = new DefaultTableModel(
+                new String[]{"Course", "Prerequisite"}, 0);
+        table = new JTable(tableModel);
 
-        buttonPanel.add(addButton);
-        buttonPanel.add(loadButton);
-        buttonPanel.add(deleteButton);
+        UITheme.wrapContent(this, "Prerequisites",
+                "Define course prerequisite requirements",
+                leftPanel, table);
 
-        panel.add(buttonPanel);
-
-        JPanel searchPanel =
-                new JPanel(
-                        new BorderLayout()
-                );
-
-        searchPanel.add(
-                new JLabel("Course ID"),
-                BorderLayout.WEST
-        );
-
-        searchPanel.add(
-                searchField,
-                BorderLayout.CENTER
-        );
-        searchPanel.add(
-                searchButton,
-                BorderLayout.EAST
-        );
-
-        add(searchPanel, BorderLayout.SOUTH);
-
-        add(panel, BorderLayout.NORTH);
-
-        tableModel =
-                new DefaultTableModel(
-                        new String[]{
-                                "Course",
-                                "Prerequisite"
-                        },
-                        0
-                );
-
-        table =
-                new JTable(tableModel);
-
-        add(
-                new JScrollPane(table),
-                BorderLayout.CENTER
-        );
-
-        addButton.addActionListener(
-                e -> addPrerequisite()
-        );
-
-        loadButton.addActionListener(
-                e -> loadPrerequisites()
-        );
-
-        deleteButton.addActionListener(
-                e -> deletePrerequisite()
-        );
-
-        searchButton.addActionListener(
-                e -> searchPrerequisite()
-        );
+        addButton.addActionListener(e -> addPrerequisite());
+        loadButton.addActionListener(e -> loadPrerequisites());
+        deleteButton.addActionListener(e -> deletePrerequisite());
+        searchButton.addActionListener(e -> searchPrerequisite());
     }
 
     private void loadCourses() {
-
-        for (
-                Course course :
-                new CourseDAO()
-                        .getAllCourses()
-        ) {
-
+        courseCombo.removeAllItems();
+        prereqCombo.removeAllItems();
+        for (Course course : new CourseDAO().getAllCourses()) {
             courseCombo.addItem(course);
             prereqCombo.addItem(course);
         }
@@ -164,42 +90,20 @@ public class PrerequisitePanel extends JPanel {
 
     private void addPrerequisite() {
 
-        Course course =
-                (Course)
-                        courseCombo.getSelectedItem();
+        Course course = (Course) courseCombo.getSelectedItem();
+        Course prereq = (Course) prereqCombo.getSelectedItem();
 
-        Course prereq =
-                (Course)
-                        prereqCombo.getSelectedItem();
-        PrerequisiteDAO dao =
-                new PrerequisiteDAO();
+        if (course == null || prereq == null) return;
 
-        if(
-                dao.exists(
-                        course.getCourseId(),
-                        prereq.getCourseId()
-                )
-        ){
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Already exists"
-            );
+        PrerequisiteDAO dao = new PrerequisiteDAO();
+
+        if (dao.exists(course.getCourseId(), prereq.getCourseId())) {
+            JOptionPane.showMessageDialog(this, "Prerequisite already exists");
             return;
         }
-        boolean result =
-                new PrerequisiteDAO()
-                        .addPrerequisite(
-                                course.getCourseId(),
-                                prereq.getCourseId()
-                        );
 
-        if(result) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Prerequisite Added"
-            );
-
+        if (dao.addPrerequisite(course.getCourseId(), prereq.getCourseId())) {
+            JOptionPane.showMessageDialog(this, "Prerequisite added");
             loadPrerequisites();
         }
     }
@@ -208,75 +112,30 @@ public class PrerequisitePanel extends JPanel {
 
         tableModel.setRowCount(0);
 
-        for (
-                Prerequisite prerequisite :
-                new PrerequisiteDAO()
-                        .getAllPrerequisites()
-        ) {
-
-            tableModel.addRow(
-                    new Object[]{
-                            prerequisite.getCourseId(),
-                            prerequisite.getPrereqId()
-                    }
-            );
+        for (Prerequisite p : new PrerequisiteDAO().getAllPrerequisites()) {
+            tableModel.addRow(new Object[]{p.getCourseId(), p.getPrereqId()});
         }
     }
+
     private void deletePrerequisite() {
 
-        int row =
-                table.getSelectedRow();
+        int row = table.getSelectedRow();
+        if (row == -1) return;
 
-        if(row == -1){
+        String courseId = tableModel.getValueAt(row, 0).toString();
+        String prereqId = tableModel.getValueAt(row, 1).toString();
 
-            return;
-        }
-
-        String courseId =
-                tableModel.getValueAt(
-                        row,
-                        0
-                ).toString();
-
-        String prereqId =
-                tableModel.getValueAt(
-                        row,
-                        1
-                ).toString();
-
-        boolean deleted =
-                new PrerequisiteDAO()
-                        .deletePrerequisite(
-                                courseId,
-                                prereqId
-                        );
-
-        if(deleted){
-
+        if (new PrerequisiteDAO().deletePrerequisite(courseId, prereqId)) {
             loadPrerequisites();
         }
     }
+
     private void searchPrerequisite() {
 
         tableModel.setRowCount(0);
 
-        for(
-
-                Prerequisite p :
-
-                new PrerequisiteDAO()
-                        .searchByCourse(
-                                searchField.getText()
-                        )
-
-        ){
-
-            tableModel.addRow(
-                    new Object[]{
-                            p.getCourseId(),
-                            p.getPrereqId()
-                    }
-            );
+        for (Prerequisite p : new PrerequisiteDAO().searchByCourse(searchField.getText())) {
+            tableModel.addRow(new Object[]{p.getCourseId(), p.getPrereqId()});
         }
     }
 }
