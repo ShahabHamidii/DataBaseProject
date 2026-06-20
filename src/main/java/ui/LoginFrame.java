@@ -33,7 +33,6 @@ public class LoginFrame extends JFrame {
         root.setBackground(UITheme.CONTENT_BG);
         setContentPane(root);
 
-        // ── Header ──────────────────────────────────────────
         JPanel header = new JPanel();
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
         header.setBackground(UITheme.SIDEBAR_BG);
@@ -61,7 +60,6 @@ public class LoginFrame extends JFrame {
 
         root.add(header, BorderLayout.NORTH);
 
-        // ── Form ────────────────────────────────────────────
         JPanel form = new JPanel();
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
         form.setBackground(UITheme.CONTENT_BG);
@@ -103,17 +101,17 @@ public class LoginFrame extends JFrame {
 
         root.add(form, BorderLayout.CENTER);
 
-        // ── Footer ──────────────────────────────────────────
-        JLabel footer = new JLabel("v1.0  •  University DBMS", SwingConstants.CENTER);
+
+        JLabel footer = new JLabel("v2.1  •  University DBMS", SwingConstants.CENTER);
         footer.setFont(new Font("SansSerif", Font.PLAIN, 10));
         footer.setForeground(new Color(0x94A3B8));
         footer.setBorder(new EmptyBorder(0, 0, 16, 0));
         root.add(footer, BorderLayout.SOUTH);
 
-        // ── Actions ─────────────────────────────────────────
+
         loginButton.addActionListener(e -> doLogin());
 
-        // Enter کلید
+
         KeyAdapter enter = new KeyAdapter() {
             @Override public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) doLogin();
@@ -138,7 +136,7 @@ public class LoginFrame extends JFrame {
         loadingLabel.setVisible(true);
         statusLabel.setText("");
 
-        // لاگین رو توی thread جدا انجام بده تا UI فریز نکنه
+
         SwingWorker<User, Void> worker = new SwingWorker<>() {
             @Override
             protected User doInBackground() {
@@ -170,7 +168,6 @@ public class LoginFrame extends JFrame {
         worker.execute();
     }
 
-    // ── Helpers ─────────────────────────────────────────────
     private JLabel makeLabel(String text) {
         JLabel lbl = new JLabel(text);
         lbl.setFont(new Font("SansSerif", Font.BOLD, 13));

@@ -2,457 +2,186 @@ package ui;
 
 import dao.CourseDAO;
 import model.Course;
+import util.UITheme;
+import util.UIUtil;
+import util.ValidationUtil;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
-import util.ValidationUtil;
-import util.UITheme;
-import util.UIUtil;
-
 public class CoursePanel extends JPanel {
 
-    private JTextField idField;
-
-    private JTextField titleField;
-
-    private JTextField deptField;
-
-    private JTextField creditsField;
-
-    private JTextField searchField;
-
-    private JButton addButton;
-
-    private JButton updateButton;
-
-    private JButton deleteButton;
-
-    private JButton loadButton;
-
-    private JButton searchButton;
-
+    private JTextField idField, titleField, deptField, creditsField, searchField;
     private JTable table;
-
     private DefaultTableModel tableModel;
+    private final CourseDAO dao = new CourseDAO();
 
     public CoursePanel() {
-
         initComponents();
-
         loadCourses();
     }
 
     private void initComponents() {
+        setLayout(new BorderLayout(0, 0));
+        setBackground(UITheme.CONTENT_BG);
+        setBorder(new EmptyBorder(24, 28, 24, 28));
 
-        idField = new JTextField();
-        titleField = new JTextField();
-        deptField = new JTextField();
-        creditsField = new JTextField();
-        searchField = new JTextField();
+        add(UITheme.createPageHeader("Courses", "Manage course catalog"), BorderLayout.NORTH);
 
-        UITheme.styleTextField(idField);
-        UITheme.styleTextField(titleField);
-        UITheme.styleTextField(deptField);
-        UITheme.styleTextField(creditsField);
-        UITheme.styleTextField(searchField);
+        // ── فرم ────────────────────────────────────────────
+        idField      = makeField();
+        titleField   = makeField();
+        deptField    = makeField();
+        creditsField = makeField();
+        searchField  = makeField();
 
         JPanel formGrid = UITheme.createFormGrid(5, 2,
-                UITheme.createFieldLabel("Course ID"), idField,
-                UITheme.createFieldLabel("Title"), titleField,
-                UITheme.createFieldLabel("Department"), deptField,
-                UITheme.createFieldLabel("Credits"), creditsField,
-                UITheme.createFieldLabel("Search Department"), searchField
+                UITheme.createFieldLabel("Course ID"),         idField,
+                UITheme.createFieldLabel("Title"),             titleField,
+                UITheme.createFieldLabel("Department"),        deptField,
+                UITheme.createFieldLabel("Credits"),           creditsField,
+                UITheme.createFieldLabel("Search (title/dept)"), searchField
         );
 
-        addButton = UIUtil.createButton("Add", UIUtil.ButtonStyle.SUCCESS);
-        updateButton = UIUtil.createButton("Update", UIUtil.ButtonStyle.PRIMARY);
-        deleteButton = UIUtil.createButton("Delete", UIUtil.ButtonStyle.DANGER);
-        loadButton = UIUtil.createButton("Refresh", UIUtil.ButtonStyle.SECONDARY);
-        searchButton = UIUtil.createButton("Search", UIUtil.ButtonStyle.GHOST);
+        JButton addBtn    = UIUtil.createButton("Add",     UIUtil.ButtonStyle.SUCCESS);
+        JButton updateBtn = UIUtil.createButton("Update",  UIUtil.ButtonStyle.PRIMARY);
+        JButton deleteBtn = UIUtil.createButton("Delete",  UIUtil.ButtonStyle.DANGER);
+        JButton refreshBtn= UIUtil.createButton("Refresh", UIUtil.ButtonStyle.SECONDARY);
+        JButton searchBtn = UIUtil.createButton("Search",  UIUtil.ButtonStyle.GHOST);
+        JButton clearBtn  = UIUtil.createButton("Clear",   UIUtil.ButtonStyle.GHOST);
 
         JPanel leftPanel = UITheme.createCard("Course Details",
                 UITheme.createFormGrid(2, 1, formGrid,
-                        UITheme.createButtonBar(addButton, updateButton, deleteButton, loadButton, searchButton)));
+                        UITheme.createButtonBar(addBtn, updateBtn, deleteBtn,
+                                refreshBtn, searchBtn, clearBtn)));
 
+        // ── جدول ───────────────────────────────────────────
         tableModel = new DefaultTableModel(
-                new String[]{"Course ID", "Title", "Department", "Credits"}, 0);
+                new String[]{"Course ID", "Title", "Department", "Credits"}, 0) {
+            @Override public boolean isCellEditable(int r, int c) { return false; }
+        };
         table = new JTable(tableModel);
+        UITheme.wrapContent(this, "Courses", "Manage course catalog", leftPanel, table);
 
-        UITheme.wrapContent(this, "Courses",
-                "Manage course catalog and filter by department",
-                leftPanel, table);
-
-        addButton.addActionListener(e -> addCourse());
-        updateButton.addActionListener(e -> updateCourse());
-        deleteButton.addActionListener(e -> deleteCourse());
-        loadButton.addActionListener(e -> loadCourses());
-        searchButton.addActionListener(e -> searchCourses());
+        // ── Events ─────────────────────────────────────────
+        addBtn.addActionListener(e -> addCourse());
+        updateBtn.addActionListener(e -> updateCourse());
+        deleteBtn.addActionListener(e -> deleteCourse());
+        refreshBtn.addActionListener(e -> loadCourses());
+        searchBtn.addActionListener(e -> searchCourses());
+        clearBtn.addActionListener(e -> clearFields());
         table.getSelectionModel().addListSelectionListener(e -> fillFormFromTable());
+
+        // Enter توی search
+        searchField.addActionListener(e -> searchCourses());
     }
 
+    // ── Validation مشترک ────────────────────────────────────
+    private boolean validateFields() {
+        if (ValidationUtil.isEmpty(idField.getText())     ||
+                ValidationUtil.isEmpty(titleField.getText())  ||
+                ValidationUtil.isEmpty(deptField.getText())   ||
+                ValidationUtil.isEmpty(creditsField.getText())) {
+            JOptionPane.showMessageDialog(this, "All fields are required.");
+            return false;
+        }
+        if (!ValidationUtil.isInteger(creditsField.getText())) {
+            JOptionPane.showMessageDialog(this, "Credits must be a number.");
+            return false;
+        }
+        return true;
+    }
+
+    private Course buildCourseFromForm() {
+        return new Course(
+                idField.getText().trim(),
+                titleField.getText().trim(),
+                deptField.getText().trim(),
+                Integer.parseInt(creditsField.getText().trim())
+        );
+    }
+
+    // ── CRUD ────────────────────────────────────────────────
     private void addCourse() {
-
-        if (
-
-                ValidationUtil.isEmpty(
-                        idField.getText()
-                )
-
-                        ||
-
-                        ValidationUtil.isEmpty(
-                                titleField.getText()
-                        )
-
-                        ||
-
-                        ValidationUtil.isEmpty(
-                                deptField.getText()
-                        )
-
-                        ||
-
-                        ValidationUtil.isEmpty(
-                                creditsField.getText()
-                        )
-
-        ) {
-
-            JOptionPane.showMessageDialog(
-
-                    this,
-
-                    "All fields are required."
-
-            );
-
-            return;
-        }
-
-        if (
-
-                !ValidationUtil.isInteger(
-                        creditsField.getText()
-                )
-
-        ) {
-
-            JOptionPane.showMessageDialog(
-
-                    this,
-
-                    "Credits must be numeric."
-
-            );
-
-            return;
-        }
-
-        try {
-
-            Course course =
-                    new Course(
-                            idField.getText(),
-
-                            titleField.getText(),
-
-                            deptField.getText(),
-
-                            Integer.parseInt(
-                                    creditsField.getText()
-                            )
-                    );
-
-            CourseDAO dao =
-                    new CourseDAO();
-
-            boolean inserted =
-                    dao.addCourse(course);
-
-            if (inserted) {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Course Added!"
-                );
-
-                loadCourses();
-
-                clearFields();
-
-            } else {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Insert Failed!"
-                );
-            }
-
-        } catch (Exception e) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage()
-            );
-        }
-    }
-
-    private void loadCourses() {
-
-        tableModel.setRowCount(0);
-
-        CourseDAO dao =
-                new CourseDAO();
-
-        List<Course> courses =
-                dao.getAllCourses();
-
-        for (Course course : courses) {
-
-            Object[] row = {
-
-                    course.getCourseId(),
-
-                    course.getTitle(),
-
-                    course.getDeptName(),
-
-                    course.getCredits()
-            };
-
-            tableModel.addRow(row);
-        }
+        if (!validateFields()) return;
+        boolean ok = dao.addCourse(buildCourseFromForm());
+        JOptionPane.showMessageDialog(this, ok ? "Course added!" : "Insert failed.");
+        if (ok) { loadCourses(); clearFields(); }
     }
 
     private void updateCourse() {
-
-        if (
-
-                ValidationUtil.isEmpty(
-                        idField.getText()
-                )
-
-                        ||
-
-                        ValidationUtil.isEmpty(
-                                titleField.getText()
-                        )
-
-                        ||
-
-                        ValidationUtil.isEmpty(
-                                deptField.getText()
-                        )
-
-                        ||
-
-                        ValidationUtil.isEmpty(
-                                creditsField.getText()
-                        )
-
-        ) {
-
-            JOptionPane.showMessageDialog(
-
-                    this,
-
-                    "All fields are required."
-
-            );
-
-            return;
-        }
-
-        if (
-
-                !ValidationUtil.isInteger(
-                        creditsField.getText()
-                )
-
-        ) {
-
-            JOptionPane.showMessageDialog(
-
-                    this,
-
-                    "Credits must be numeric."
-
-            );
-
-            return;
-        }
-
-        try {
-
-            Course course =
-                    new Course(
-                            idField.getText(),
-
-                            titleField.getText(),
-
-                            deptField.getText(),
-
-                            Integer.parseInt(
-                                    creditsField.getText()
-                            )
-                    );
-
-            CourseDAO dao =
-                    new CourseDAO();
-
-            boolean updated =
-                    dao.updateCourse(course);
-
-            if (updated) {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Course Updated!"
-                );
-
-                loadCourses();
-
-            } else {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Update Failed!"
-                );
-            }
-
-        } catch (Exception e) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage()
-            );
-        }
+        if (!validateFields()) return;
+        boolean ok = dao.updateCourse(buildCourseFromForm());
+        JOptionPane.showMessageDialog(this, ok ? "Course updated!" : "Update failed.");
+        if (ok) loadCourses();
     }
 
     private void deleteCourse() {
+        String id = idField.getText().trim();
+        if (id.isEmpty()) { JOptionPane.showMessageDialog(this, "Select a course first."); return; }
 
-        try {
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Delete course " + id + "?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if (confirm != JOptionPane.YES_OPTION) return;
 
-            CourseDAO dao =
-                    new CourseDAO();
-
-            boolean deleted =
-                    dao.deleteCourse(
-                            idField.getText()
-                    );
-
-            if (deleted) {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Course Deleted!"
-                );
-
-                loadCourses();
-
-                clearFields();
-
-            } else {
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Delete Failed!"
-                );
-            }
-
-        } catch (Exception e) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage()
-            );
-        }
+        boolean ok = dao.deleteCourse(id);
+        JOptionPane.showMessageDialog(this, ok ? "Course deleted!" : "Delete failed.");
+        if (ok) { loadCourses(); clearFields(); }
     }
 
     private void searchCourses() {
+        String keyword = searchField.getText().trim();
+        if (keyword.isEmpty()) { loadCourses(); return; }
 
         tableModel.setRowCount(0);
+        // جستجو هم در title هم در dept_name
+        List<Course> results = dao.searchByTitle(keyword);
+        // اگه نتیجه‌ای نداشت، بر اساس dept امتحان کن
+        if (results.isEmpty()) results = dao.searchByDepartment(keyword);
 
-        String dept =
-                searchField.getText();
+        for (Course c : results) {
+            tableModel.addRow(new Object[]{
+                    c.getCourseId(), c.getTitle(), c.getDeptName(), c.getCredits()
+            });
+        }
 
-        List<Course> courses =
-                new CourseDAO()
-                        .searchByDepartment(
-                                searchField.getText()
-                        );
+        if (tableModel.getRowCount() == 0)
+            JOptionPane.showMessageDialog(this, "No courses found.");
+    }
 
-        for (Course course : courses) {
-
-            if (course.getDeptName()
-                    .equalsIgnoreCase(dept)) {
-
-                Object[] row = {
-
-                        course.getCourseId(),
-
-                        course.getTitle(),
-
-                        course.getDeptName(),
-
-                        course.getCredits()
-                };
-
-                tableModel.addRow(row);
-            }
+    private void loadCourses() {
+        tableModel.setRowCount(0);
+        for (Course c : dao.getAllCourses()) {
+            tableModel.addRow(new Object[]{
+                    c.getCourseId(), c.getTitle(), c.getDeptName(), c.getCredits()
+            });
         }
     }
 
     private void clearFields() {
-
         idField.setText("");
-
         titleField.setText("");
-
         deptField.setText("");
-
         creditsField.setText("");
+        searchField.setText("");
+        table.clearSelection();
     }
 
     private void fillFormFromTable() {
+        int row = table.getSelectedRow();
+        if (row == -1) return;
+        idField.setText(tableModel.getValueAt(row, 0).toString());
+        titleField.setText(tableModel.getValueAt(row, 1).toString());
+        deptField.setText(tableModel.getValueAt(row, 2).toString());
+        creditsField.setText(tableModel.getValueAt(row, 3).toString());
+    }
 
-        int row =
-                table.getSelectedRow();
-
-        if (row == -1) {
-
-            return;
-        }
-
-        idField.setText(
-                tableModel.getValueAt(
-                        row,
-                        0
-                ).toString()
-        );
-
-        titleField.setText(
-                tableModel.getValueAt(
-                        row,
-                        1
-                ).toString()
-        );
-
-        deptField.setText(
-                tableModel.getValueAt(
-                        row,
-                        2
-                ).toString()
-        );
-
-        creditsField.setText(
-                tableModel.getValueAt(
-                        row,
-                        3
-                ).toString()
-        );
+    private JTextField makeField() {
+        JTextField f = new JTextField();
+        UITheme.styleTextField(f);
+        return f;
     }
 }

@@ -155,7 +155,7 @@ public class MainDashboard extends JFrame {
     private JLabel buildFooter() {
         JLabel footer = new JLabel(
                 "<html><center>University DBMS<br>"
-                        + "<span style='color:#64748B;font-size:10px'>v1.0  •  "
+                        + "<span style='color:#64748B;font-size:10px'>v2.1  •  "
                         + currentUser.getUsername() + "</span></center></html>",
                 SwingConstants.CENTER
         );
