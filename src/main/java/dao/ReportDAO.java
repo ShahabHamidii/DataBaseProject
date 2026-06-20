@@ -88,6 +88,7 @@ public class ReportDAO {
 
         return rows;
     }
+
     public List<Object[]> getStudentsPerDepartment() {
 
         List<Object[]> rows =
@@ -133,6 +134,7 @@ public class ReportDAO {
 
         return rows;
     }
+
     public List<Object[]> getInstructorTeachingReport() {
 
         List<Object[]> rows =
@@ -192,6 +194,7 @@ public class ReportDAO {
 
         return rows;
     }
+
     public List<Object[]> getCourseEnrollmentReport() {
 
         List<Object[]> rows =
@@ -247,128 +250,6 @@ public class ReportDAO {
         return rows;
     }
 
-    public int getStudentCount() {
-
-        String sql =
-                "SELECT COUNT(*) FROM student";
-
-        try (
-
-                Connection con =
-                        DBConnection.getConnection();
-
-                PreparedStatement pst =
-                        con.prepareStatement(sql);
-
-                ResultSet rs =
-                        pst.executeQuery()
-
-        ) {
-
-            if(rs.next()) {
-
-                return rs.getInt(1);
-            }
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-
-        return 0;
-    }
-
-    public int getCourseCount() {
-
-        String sql =
-                "SELECT COUNT(*) FROM course";
-
-        try (
-
-                Connection con =
-                        DBConnection.getConnection();
-
-                PreparedStatement pst =
-                        con.prepareStatement(sql);
-
-                ResultSet rs =
-                        pst.executeQuery()
-
-        ) {
-
-            if(rs.next()) {
-
-                return rs.getInt(1);
-            }
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-
-        return 0;
-    }
-    public int getInstructorCount() {
-
-        String sql =
-                "SELECT COUNT(*) FROM instructor";
-
-        try (
-
-                Connection con =
-                        DBConnection.getConnection();
-
-                PreparedStatement pst =
-                        con.prepareStatement(sql);
-
-                ResultSet rs =
-                        pst.executeQuery()
-
-        ) {
-
-            if(rs.next()) {
-
-                return rs.getInt(1);
-            }
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-
-        return 0;
-    }
-    public int getEnrollmentCount() {
-
-        String sql =
-                "SELECT COUNT(*) FROM takes";
-
-        try (
-
-                Connection con =
-                        DBConnection.getConnection();
-
-                PreparedStatement pst =
-                        con.prepareStatement(sql);
-
-                ResultSet rs =
-                        pst.executeQuery()
-
-        ) {
-
-            if(rs.next()) {
-
-                return rs.getInt(1);
-            }
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-
-        return 0;
-    }
-
     public List<Object[]> getTopStudentsByCredits() {
 
         List<Object[]> rows =
@@ -416,6 +297,7 @@ public class ReportDAO {
 
         return rows;
     }
+
     public List<Object[]> getAdvisorAssignments() {
 
         List<Object[]> rows =
@@ -472,9 +354,6 @@ public class ReportDAO {
         return rows;
     }
 
-    // ── این متدها رو به ReportDAO موجودت اضافه کن ──────────────
-
-    // گزارش کامل: دانشجو + درس + استاد + بخش (JOIN چندگانه)
     public List<Object[]> getFullAcademicReport() {
         List<Object[]> list = new ArrayList<>();
         String sql = """
@@ -517,7 +396,6 @@ public class ReportDAO {
         return list;
     }
 
-    // آمار هر بخش: تعداد درس‌ها، دانشجوها، بودجه
     public List<Object[]> getDepartmentSummary() {
         List<Object[]> list = new ArrayList<>();
         String sql = """
@@ -548,7 +426,6 @@ public class ReportDAO {
         return list;
     }
 
-    // دانشجوهایی که پیش‌نیاز دارن ولی هنوز نگرفتن
     public List<Object[]> getStudentsMissingPrereqs() {
         List<Object[]> list = new ArrayList<>();
         String sql = """
@@ -612,7 +489,6 @@ public class ReportDAO {
         return new int[]{0, 0, 0, 0};
     }
 
-    // دانشجوهایی که credit بیشتر از میانگین کل دارن (Nested Query)
     public List<Object[]> getAboveAverageStudents() {
         List<Object[]> list = new ArrayList<>();
         String sql = """
@@ -632,7 +508,6 @@ public class ReportDAO {
         return list;
     }
 
-    // درس‌هایی که هیچ دانشجویی ثبت‌نام نکرده (NOT EXISTS)
     public List<Object[]> getCoursesWithNoEnrollment() {
         List<Object[]> list = new ArrayList<>();
         String sql = """
@@ -654,7 +529,6 @@ public class ReportDAO {
         return list;
     }
 
-    // استادهایی که حقوق بیشتر از میانگین بخش خودشون دارن (Correlated Subquery)
     public List<Object[]> getHighEarningInstructors() {
         List<Object[]> list = new ArrayList<>();
         String sql = """

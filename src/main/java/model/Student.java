@@ -39,16 +39,8 @@ public class Student {
         return deptName;
     }
 
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
-    }
-
     public int getTotalCredits() {
         return totalCredits;
-    }
-
-    public void setTotalCredits(int totalCredits) {
-        this.totalCredits = totalCredits;
     }
 
     @Override

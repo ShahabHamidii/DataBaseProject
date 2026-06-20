@@ -15,9 +15,9 @@ public class SectionDAO {
 
         String sql =
                 """
-                INSERT INTO section
-                VALUES (?,?,?,?,?,?,?)
-                """;
+                        INSERT INTO section
+                        VALUES (?,?,?,?,?,?,?)
+                        """;
 
         try (
 
@@ -92,23 +92,21 @@ public class SectionDAO {
         return sections;
     }
 
-    public boolean updateSection(
-            Section section
-    ) {
+    public boolean updateSection(Section section) {
 
         String sql =
                 """
-                UPDATE section
-                SET
-                    building = ?,
-                    room_number = ?,
-                    time_slot_id = ?
-                WHERE
-                    course_id = ?
-                    AND sec_id = ?
-                    AND semester = ?
-                    AND year = ?
-                """;
+                        UPDATE section
+                        SET
+                            building = ?,
+                            room_number = ?,
+                            time_slot_id = ?
+                        WHERE
+                            course_id = ?
+                            AND sec_id = ?
+                            AND semester = ?
+                            AND year = ?
+                        """;
 
         try (
 
@@ -153,13 +151,13 @@ public class SectionDAO {
 
         String sql =
                 """
-                DELETE FROM section
-                WHERE
-                    course_id = ?
-                    AND sec_id = ?
-                    AND semester = ?
-                    AND year = ?
-                """;
+                        DELETE FROM section
+                        WHERE
+                            course_id = ?
+                            AND sec_id = ?
+                            AND semester = ?
+                            AND year = ?
+                        """;
 
         try (
 
@@ -198,13 +196,13 @@ public class SectionDAO {
 
         String sql =
                 """
-                SELECT *
-                FROM section
-                WHERE course_id = ?
-                AND sec_id = ?
-                AND semester = ?
-                AND year = ?
-                """;
+                        SELECT *
+                        FROM section
+                        WHERE course_id = ?
+                        AND sec_id = ?
+                        AND semester = ?
+                        AND year = ?
+                        """;
 
         try (
 
@@ -231,19 +229,17 @@ public class SectionDAO {
         return false;
     }
 
-    public List<Section> searchSections(
-            String courseId
-    ) {
+    public List<Section> searchSections(String courseId) {
 
         List<Section> sections =
                 new ArrayList<>();
 
         String sql =
                 """
-                SELECT *
-                FROM section
-                WHERE course_id = ?
-                """;
+                        SELECT *
+                        FROM section
+                        WHERE course_id = ?
+                        """;
 
         try (
 

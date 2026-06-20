@@ -142,6 +142,7 @@ public class StudentDAO {
 
         return false;
     }
+
     public boolean deleteStudent(int id) {
 
         String sql =
@@ -167,46 +168,5 @@ public class StudentDAO {
 
         return false;
     }
-    public List<Student> searchByDepartment(
-            String deptName
-    ) {
 
-        List<Student> students =
-                new ArrayList<>();
-
-        String sql =
-                "SELECT * FROM student " +
-                        "WHERE dept_name = ?";
-
-        try (Connection con =
-                     DBConnection.getConnection();
-
-             PreparedStatement pst =
-                     con.prepareStatement(sql)) {
-
-            pst.setString(1, deptName);
-
-            ResultSet rs =
-                    pst.executeQuery();
-
-            while (rs.next()) {
-
-                Student student =
-                        new Student(
-                                rs.getInt("id"),
-                                rs.getString("name"),
-                                rs.getString("dept_name"),
-                                rs.getInt("tot_cred")
-                        );
-
-                students.add(student);
-            }
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-
-        return students;
-    }
 }

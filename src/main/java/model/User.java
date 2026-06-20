@@ -13,4 +13,5 @@ public class User {
 
     public String getUsername() { return username; }
     public Role getRole() { return role; }
+
 }

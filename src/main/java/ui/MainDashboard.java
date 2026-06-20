@@ -27,7 +27,7 @@ public class MainDashboard extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         initUI();
-        SwingUtilities.invokeLater(() -> showPanel(new DashboardPanel(), "Dashboard"));
+        SwingUtilities.invokeLater(() -> showPanel(new DashboardPanel(currentUser), "Dashboard"));
     }
 
     private void initUI() {
@@ -104,7 +104,7 @@ public class MainDashboard extends JFrame {
 
         User.Role role = currentUser.getRole();
 
-        addNav(navPanel, "⌂", "Dashboard", DashboardPanel::new);
+        addNav(navPanel, "⌂", "Dashboard", () -> new DashboardPanel(currentUser));
 
         if (role == User.Role.ADMIN || role == User.Role.STUDENT) {
             addNav(navPanel, "🎓", "Students", StudentPanel::new);
@@ -242,5 +242,10 @@ public class MainDashboard extends JFrame {
     private String capitalize(String s) {
         if (s == null || s.isEmpty()) return s;
         return s.charAt(0) + s.substring(1).toLowerCase();
+    }
+
+    public void navigateTo(String label) {
+        JButton btn = navButtons.get(label);
+        if (btn != null) btn.doClick();
     }
 }

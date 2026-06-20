@@ -251,4 +251,5 @@ public class CourseDAO {
 
         return list;
     }
+
 }

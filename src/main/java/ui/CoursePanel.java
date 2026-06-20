@@ -31,7 +31,7 @@ public class CoursePanel extends JPanel {
 
         add(UITheme.createPageHeader("Courses", "Manage course catalog"), BorderLayout.NORTH);
 
-        // ── فرم ────────────────────────────────────────────
+
         idField      = makeField();
         titleField   = makeField();
         deptField    = makeField();
@@ -58,7 +58,6 @@ public class CoursePanel extends JPanel {
                         UITheme.createButtonBar(addBtn, updateBtn, deleteBtn,
                                 refreshBtn, searchBtn, clearBtn)));
 
-        // ── جدول ───────────────────────────────────────────
         tableModel = new DefaultTableModel(
                 new String[]{"Course ID", "Title", "Department", "Credits"}, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -66,7 +65,6 @@ public class CoursePanel extends JPanel {
         table = new JTable(tableModel);
         UITheme.wrapContent(this, "Courses", "Manage course catalog", leftPanel, table);
 
-        // ── Events ─────────────────────────────────────────
         addBtn.addActionListener(e -> addCourse());
         updateBtn.addActionListener(e -> updateCourse());
         deleteBtn.addActionListener(e -> deleteCourse());
@@ -75,11 +73,9 @@ public class CoursePanel extends JPanel {
         clearBtn.addActionListener(e -> clearFields());
         table.getSelectionModel().addListSelectionListener(e -> fillFormFromTable());
 
-        // Enter توی search
         searchField.addActionListener(e -> searchCourses());
     }
 
-    // ── Validation مشترک ────────────────────────────────────
     private boolean validateFields() {
         if (ValidationUtil.isEmpty(idField.getText())     ||
                 ValidationUtil.isEmpty(titleField.getText())  ||
@@ -104,7 +100,6 @@ public class CoursePanel extends JPanel {
         );
     }
 
-    // ── CRUD ────────────────────────────────────────────────
     private void addCourse() {
         if (!validateFields()) return;
         boolean ok = dao.addCourse(buildCourseFromForm());
@@ -137,9 +132,7 @@ public class CoursePanel extends JPanel {
         if (keyword.isEmpty()) { loadCourses(); return; }
 
         tableModel.setRowCount(0);
-        // جستجو هم در title هم در dept_name
         List<Course> results = dao.searchByTitle(keyword);
-        // اگه نتیجه‌ای نداشت، بر اساس dept امتحان کن
         if (results.isEmpty()) results = dao.searchByDepartment(keyword);
 
         for (Course c : results) {

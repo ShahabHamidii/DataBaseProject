@@ -115,6 +115,7 @@ public class PrerequisiteDAO {
 
         return false;
     }
+
     public boolean exists(
             String courseId,
             String prereqId

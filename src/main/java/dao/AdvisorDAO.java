@@ -63,6 +63,7 @@ public class AdvisorDAO {
 
         return false;
     }
+
     public boolean deleteAdvisor(int studentId) {
 
         String sql =
@@ -142,6 +143,5 @@ public class AdvisorDAO {
 
         return rows;
     }
-
 
 }

@@ -54,7 +54,7 @@ public class InstructorPanel extends JPanel {
                 UITheme.createFieldLabel("Name"), nameField,
                 UITheme.createFieldLabel("Department"), deptField,
                 UITheme.createFieldLabel("Salary"), salaryField,
-                UITheme.createFieldLabel("Search By ID"), searchField
+                UITheme.createFieldLabel("Search (ID or Name)"), searchField
         );
 
         addButton = UIUtil.createButton("Add", UIUtil.ButtonStyle.SUCCESS);
@@ -369,44 +369,33 @@ public class InstructorPanel extends JPanel {
     }
 
     private void searchInstructor() {
-
-        if (!ValidationUtil.isInteger(searchField.getText())) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Please enter a valid instructor ID"
-            );
-
-            return;
-        }
-
-        Instructor instructor =
-                new InstructorDAO()
-                        .getInstructorById(
-                                Integer.parseInt(
-                                        searchField.getText()
-                                )
-                        );
+        String keyword = searchField.getText().trim();
+        if (keyword.isEmpty()) { loadInstructors(); return; }
 
         tableModel.setRowCount(0);
 
-        if (instructor != null) {
-
-            tableModel.addRow(
-                    new Object[]{
-                            instructor.getId(),
-                            instructor.getName(),
-                            instructor.getDeptName(),
-                            instructor.getSalary()
-                    }
-            );
-
-        } else {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Instructor not found"
-            );
+        if (ValidationUtil.isInteger(keyword)) {
+            Instructor ins = new InstructorDAO()
+                    .getInstructorById(Integer.parseInt(keyword));
+            if (ins != null) {
+                tableModel.addRow(new Object[]{
+                        ins.getId(), ins.getName(), ins.getDeptName(), ins.getSalary()
+                });
+            } else {
+                JOptionPane.showMessageDialog(this, "Instructor not found.");
+            }
+        }
+        else {
+            var list = new InstructorDAO().searchByName(keyword);
+            if (list.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No instructors found.");
+            } else {
+                for (Instructor ins : list) {
+                    tableModel.addRow(new Object[]{
+                            ins.getId(), ins.getName(), ins.getDeptName(), ins.getSalary()
+                    });
+                }
+            }
         }
     }
 
