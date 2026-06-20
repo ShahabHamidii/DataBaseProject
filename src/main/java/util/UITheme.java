@@ -205,4 +205,30 @@ public class UITheme {
         page.add(split, BorderLayout.CENTER);
         return page;
     }
+
+    public static JPanel createSearchBar() {
+
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.setOpaque(false);
+
+        JTextField searchField = new JTextField();
+        searchField.setPreferredSize(new Dimension(260, 38));
+        searchField.setFont(FONT_BODY);
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(CARD_BORDER, 1, true),
+                new EmptyBorder(6, 10, 6, 10)
+        ));
+
+        JButton searchBtn = UIUtil.createButton("Search", UIUtil.ButtonStyle.PRIMARY);
+        searchBtn.setPreferredSize(new Dimension(100, 38));
+
+        JPanel right = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        right.setOpaque(false);
+        right.add(searchField);
+        right.add(searchBtn);
+
+        wrapper.add(right, BorderLayout.WEST);
+
+        return wrapper;
+    }
 }

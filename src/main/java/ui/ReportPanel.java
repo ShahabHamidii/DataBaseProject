@@ -33,13 +33,20 @@ public class ReportPanel extends JPanel {
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         toolbar.setOpaque(false);
         toolbar.setBorder(new EmptyBorder(0, 0, 16, 0));
-
         toolbar.add(createReportButton("All Enrollments", this::loadReports));
         toolbar.add(createReportButton("By Department", this::loadDepartmentStats));
         toolbar.add(createReportButton("Teaching Report", this::loadTeachingReport));
         toolbar.add(createReportButton("Enrollment Stats", this::loadEnrollmentStats));
         toolbar.add(createReportButton("Top Students", this::loadTopStudents));
         toolbar.add(createReportButton("Advisor Report", this::loadAdvisorReport));
+
+        toolbar.add(createReportButton("Full Academic",   this::loadFullAcademicReport));
+        toolbar.add(createReportButton("Dept Summary",    this::loadDeptSummary));
+        toolbar.add(createReportButton("Missing Prereqs", this::loadMissingPrereqs));
+
+        toolbar.add(createReportButton("Above Avg Students", this::loadAboveAvgStudents));
+        toolbar.add(createReportButton("Empty Courses",      this::loadEmptyCourses));
+        toolbar.add(createReportButton("High Earners",       this::loadHighEarners));
 
         JButton exportButton = UIUtil.createButton("Export CSV", UIUtil.ButtonStyle.SUCCESS);
         exportButton.addActionListener(e -> exportReport());
@@ -123,5 +130,44 @@ public class ReportPanel extends JPanel {
 
         CSVExporter.exportTable(table, path);
         JOptionPane.showMessageDialog(this, "CSV exported successfully");
+    }
+
+    private void loadFullAcademicReport() {
+        resetColumns("Student", "Course", "Instructor", "Department", "Semester", "Year", "Grade");
+        for (Object[] row : new ReportDAO().getFullAcademicReport()) {
+            tableModel.addRow(row);
+        }
+    }
+
+    private void loadDeptSummary() {
+        resetColumns("Department", "Budget", "Courses", "Students", "Instructors");
+        for (Object[] row : new ReportDAO().getDepartmentSummary()) {
+            tableModel.addRow(row);
+        }
+    }
+
+    private void loadMissingPrereqs() {
+        resetColumns("Student ID", "Student Name", "Wants Course", "Missing Prereq");
+        for (Object[] row : new ReportDAO().getStudentsMissingPrereqs()) {
+            tableModel.addRow(row);
+        }
+    }
+
+    private void loadAboveAvgStudents() {
+        resetColumns("ID", "Name", "Department", "Credits");
+        for (Object[] row : new ReportDAO().getAboveAverageStudents())
+            tableModel.addRow(row);
+    }
+
+    private void loadEmptyCourses() {
+        resetColumns("Course ID", "Title", "Department", "Credits");
+        for (Object[] row : new ReportDAO().getCoursesWithNoEnrollment())
+            tableModel.addRow(row);
+    }
+
+    private void loadHighEarners() {
+        resetColumns("ID", "Name", "Department", "Salary");
+        for (Object[] row : new ReportDAO().getHighEarningInstructors())
+            tableModel.addRow(row);
     }
 }

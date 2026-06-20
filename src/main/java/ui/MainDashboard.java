@@ -27,7 +27,6 @@ public class MainDashboard extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         initUI();
-        // اولین panel رو بدون ساخت مجدد نشون بده
         SwingUtilities.invokeLater(() -> showPanel(new DashboardPanel(), "Dashboard"));
     }
 
@@ -51,7 +50,6 @@ public class MainDashboard extends JFrame {
         return sidebar;
     }
 
-    // ── Brand ───────────────────────────────────────────────
     private JPanel buildBrand() {
         JPanel brand = new JPanel(new BorderLayout());
         brand.setBackground(UITheme.SIDEBAR_BG);
@@ -82,7 +80,6 @@ public class MainDashboard extends JFrame {
         row.add(text);
         brand.add(row, BorderLayout.CENTER);
 
-        // Badge نقش کاربر
         JLabel roleBadge = new JLabel(currentUser.getRole().name(), SwingConstants.CENTER);
         roleBadge.setFont(new Font("SansSerif", Font.BOLD, 10));
         roleBadge.setForeground(Color.WHITE);
@@ -99,7 +96,6 @@ public class MainDashboard extends JFrame {
         return brand;
     }
 
-    // ── Nav ─────────────────────────────────────────────────
     private JScrollPane buildNav() {
         JPanel navPanel = new JPanel();
         navPanel.setLayout(new BoxLayout(navPanel, BoxLayout.Y_AXIS));
@@ -108,7 +104,6 @@ public class MainDashboard extends JFrame {
 
         User.Role role = currentUser.getRole();
 
-        // Dashboard — همه می‌بینن
         addNav(navPanel, "⌂", "Dashboard", DashboardPanel::new);
 
         if (role == User.Role.ADMIN || role == User.Role.STUDENT) {
@@ -136,7 +131,6 @@ public class MainDashboard extends JFrame {
             addNav(navPanel, "📋", "My Teaching",  TeachingAssignmentPanel::new);
         }
 
-        // Logout
         navPanel.add(Box.createVerticalStrut(16));
         navPanel.add(makeSeparator());
         navPanel.add(Box.createVerticalStrut(8));
@@ -158,7 +152,6 @@ public class MainDashboard extends JFrame {
         return sep;
     }
 
-    // ── Footer ──────────────────────────────────────────────
     private JLabel buildFooter() {
         JLabel footer = new JLabel(
                 "<html><center>University DBMS<br>"
@@ -172,14 +165,12 @@ public class MainDashboard extends JFrame {
         return footer;
     }
 
-    // ── Helpers ─────────────────────────────────────────────
     private void addNav(JPanel panel, String icon, String label,
                         Supplier<JPanel> supplier) {
         JButton btn = UIUtil.createNavButton(icon, label);
         btn.setAlignmentX(Component.LEFT_ALIGNMENT);
         btn.addActionListener(e -> {
             setActiveNav(btn);
-            // هر panel رو lazy و توی SwingWorker بساز
             loadPanel(supplier, label);
         });
         navButtons.put(label, btn);
@@ -212,9 +203,7 @@ public class MainDashboard extends JFrame {
         UIUtil.setNavActive(button, true);
     }
 
-    // Lazy loading — panel رو توی thread جدا می‌سازه
     private void loadPanel(Supplier<JPanel> supplier, String label) {
-        // یه loading indicator نشون بده
         JPanel loading = new JPanel(new GridBagLayout());
         loading.setBackground(UITheme.CONTENT_BG);
         JLabel lbl = new JLabel("Loading...");

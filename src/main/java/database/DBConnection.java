@@ -19,7 +19,6 @@ public class DBConnection {
 
     private static Connection connection;
 
-    // فقط یه بار در startup وصل میشه
     public static void init() {
         try {
             System.out.println("Connecting to database...");

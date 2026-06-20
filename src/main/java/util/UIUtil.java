@@ -124,4 +124,30 @@ public class UIUtil {
                 Math.max((int) (color.getBlue() * (1 - factor)), 0)
         );
     }
+
+    public static JButton createActionButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(UITheme.FONT_LABEL);
+        button.setFocusPainted(false);
+        button.setBackground(UITheme.ACCENT_LIGHT);
+        button.setForeground(UITheme.TEXT_PRIMARY);
+        button.setBorder(new EmptyBorder(12, 14, 12, 14));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                button.setBackground(UITheme.ACCENT.brighter());
+                button.setForeground(Color.WHITE);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                button.setBackground(UITheme.ACCENT_LIGHT);
+                button.setForeground(UITheme.TEXT_PRIMARY);
+            }
+        });
+
+        return button;
+    }
 }

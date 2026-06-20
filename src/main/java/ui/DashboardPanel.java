@@ -1,140 +1,155 @@
 package ui;
 
 import dao.ReportDAO;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.Plot;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.data.category.DefaultCategoryDataset;
 import util.UITheme;
+import util.UIUtil;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.time.LocalDate;
 
 public class DashboardPanel extends JPanel {
 
     public DashboardPanel() {
-        setLayout(new BorderLayout(0, 0));
+        setLayout(new BorderLayout(0, 20));
         setBackground(UITheme.CONTENT_BG);
         setBorder(new EmptyBorder(24, 28, 24, 28));
 
-        add(UITheme.createPageHeader(
-                "Dashboard",
-                "Overview of your university database"
-        ), BorderLayout.NORTH);
+        add(buildHeader(), BorderLayout.NORTH);
 
-        ReportDAO dao = new ReportDAO();
+        JPanel loading = new JPanel(new GridBagLayout());
+        loading.setOpaque(false);
+        JLabel lbl = new JLabel("Loading dashboard...");
+        lbl.setForeground(UITheme.TEXT_SECONDARY);
+        loading.add(lbl);
 
-        JPanel statsRow = new JPanel(new GridLayout(1, 4, 16, 0));
-        statsRow.setOpaque(false);
-        statsRow.setBorder(new EmptyBorder(0, 0, 20, 0));
+        add(loading, BorderLayout.CENTER);
 
-        statsRow.add(createStatCard("Students", dao.getStudentCount(),
-                new Color(99, 102, 241), "\uD83C\uDF93"));
-        statsRow.add(createStatCard("Courses", dao.getCourseCount(),
-                new Color(139, 92, 246), "\uD83D\uDCDA"));
-        statsRow.add(createStatCard("Instructors", dao.getInstructorCount(),
-                new Color(236, 72, 153), "\uD83D\uDC68\u200D\uD83C\uDFEB"));
-        statsRow.add(createStatCard("Enrollments", dao.getEnrollmentCount(),
-                new Color(20, 184, 166), "\uD83D\uDCCB"));
+        new SwingWorker<int[], Void>() {
+            @Override
+            protected int[] doInBackground() {
+                return new ReportDAO().getDashboardStats();
+            }
 
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        dataset.addValue(dao.getStudentCount(), "Count", "Students");
-        dataset.addValue(dao.getCourseCount(), "Count", "Courses");
-        dataset.addValue(dao.getInstructorCount(), "Count", "Instructors");
-        dataset.addValue(dao.getEnrollmentCount(), "Count", "Enrollments");
-
-        JFreeChart chart = ChartFactory.createBarChart(
-                null, null, null, dataset
-        );
-        styleChart(chart);
-
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setBorder(new LineBorder(UITheme.CARD_BORDER, 1, true));
-        chartPanel.setBackground(UITheme.CARD_BG);
-        chartPanel.setPreferredSize(new Dimension(0, 320));
-
-        JPanel chartCard = UITheme.createCard("Statistics Overview", chartPanel);
-
-        JPanel center = new JPanel(new BorderLayout(0, 16));
-        center.setOpaque(false);
-        center.add(statsRow, BorderLayout.NORTH);
-        center.add(chartCard, BorderLayout.CENTER);
-
-        add(center, BorderLayout.CENTER);
+            @Override
+            protected void done() {
+                try {
+                    int[] stats = get();
+                    remove(loading);
+                    add(buildDashboard(stats), BorderLayout.CENTER);
+                    revalidate();
+                    repaint();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute();
     }
 
-    private JPanel createStatCard(String title, int value, Color accent, String emoji) {
-        JPanel card = new JPanel(new BorderLayout());
-        card.setBackground(UITheme.CARD_BG);
-        card.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(UITheme.CARD_BORDER, 1, true),
-                new EmptyBorder(20, 22, 20, 22)
-        ));
+    private JPanel buildHeader() {
 
-        JPanel top = new JPanel(new BorderLayout());
-        top.setOpaque(false);
+        JPanel header = new JPanel(new BorderLayout());
+        header.setOpaque(false);
 
-        JLabel emojiLabel = new JLabel(emoji);
-        emojiLabel.setFont(new Font("SansSerif", Font.PLAIN, 22));
+        JPanel left = new JPanel();
+        left.setOpaque(false);
+        left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
 
-        JPanel iconBg = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        iconBg.setOpaque(true);
-        iconBg.setBackground(blend(accent, Color.WHITE, 0.85f));
-        iconBg.setPreferredSize(new Dimension(44, 44));
-        iconBg.add(emojiLabel);
+        JLabel title = new JLabel("University Management System");
+        title.setFont(new Font("SansSerif", Font.BOLD, 28));
+        title.setForeground(UITheme.TEXT_PRIMARY);
 
-        top.add(iconBg, BorderLayout.EAST);
+        JLabel subtitle = new JLabel("Academic Administration Dashboard");
+        subtitle.setForeground(UITheme.TEXT_SECONDARY);
 
-        JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(UITheme.FONT_LABEL);
-        titleLabel.setForeground(UITheme.TEXT_SECONDARY);
+        left.add(title);
+        left.add(subtitle);
 
-        JLabel valueLabel = new JLabel(String.valueOf(value));
-        valueLabel.setFont(UITheme.FONT_STAT);
-        valueLabel.setForeground(accent);
-        valueLabel.setBorder(new EmptyBorder(8, 0, 0, 0));
+        JLabel dateLabel = new JLabel(LocalDate.now().toString());
+        dateLabel.setForeground(UITheme.TEXT_SECONDARY);
 
-        card.add(top, BorderLayout.NORTH);
-        card.add(titleLabel, BorderLayout.CENTER);
-        card.add(valueLabel, BorderLayout.SOUTH);
+        header.add(left, BorderLayout.WEST);
+        header.add(dateLabel, BorderLayout.EAST);
 
-        return card;
+        return header;
     }
 
-    private void styleChart(JFreeChart chart) {
-        chart.setBackgroundPaint(UITheme.CARD_BG);
-        chart.getLegend().setVisible(false);
+    private JPanel buildDashboard(int[] s) {
 
-        Plot plot = chart.getPlot();
-        plot.setBackgroundPaint(UITheme.CARD_BG);
-        plot.setOutlineVisible(false);
+        JPanel root = new JPanel();
+        root.setLayout(new BoxLayout(root, BoxLayout.Y_AXIS));
+        root.setOpaque(false);
 
-        if (plot instanceof CategoryPlot categoryPlot) {
-            categoryPlot.setDomainGridlinesVisible(false);
-            categoryPlot.setRangeGridlinePaint(UITheme.CARD_BORDER);
+        JPanel stats = new JPanel(new GridLayout(1, 4, 16, 0));
+        stats.setOpaque(false);
 
-            BarRenderer renderer = (BarRenderer) categoryPlot.getRenderer();
-            renderer.setSeriesPaint(0, UITheme.ACCENT);
-            renderer.setMaximumBarWidth(0.15);
-            renderer.setBarPainter(new org.jfree.chart.renderer.category.StandardBarPainter());
-            renderer.setShadowVisible(false);
-        }
+        stats.add(stat("Students", s[0]));
+        stats.add(stat("Courses", s[1]));
+        stats.add(stat("Instructors", s[2]));
+        stats.add(stat("Enrollments", s[3]));
 
-        if (chart.getTitle() != null) {
-            chart.getTitle().setVisible(false);
-        }
+        JPanel welcome = new JPanel(new GridLayout(5, 1));
+        welcome.setBorder(new LineBorder(UITheme.CARD_BORDER, 1, true));
+        welcome.setBackground(UITheme.CARD_BG);
+
+        welcome.add(new JLabel("Welcome Admin"));
+        welcome.add(new JLabel("Total Students: " + s[0]));
+        welcome.add(new JLabel("Total Courses: " + s[1]));
+        welcome.add(new JLabel("Total Instructors: " + s[2]));
+        welcome.add(new JLabel("System Status: Online | DB: Connected"));
+
+        JPanel actions = new JPanel(new GridLayout(1, 4, 15, 0));
+        actions.setOpaque(false);
+
+        actions.add(UIUtil.createActionButton("Add Student"));
+        actions.add(UIUtil.createActionButton("Add Course"));
+        actions.add(UIUtil.createActionButton("Add Instructor"));
+        actions.add(UIUtil.createActionButton("Enroll Student"));
+
+//        JList<String> activity = new JList<>(new String[]{
+//                "Student Zhang added",
+//                "Course CS-347 updated",
+//                "Enrollment completed",
+//                "Instructor assigned"
+//        });
+//
+//        JScrollPane activityScroll = new JScrollPane(activity);
+//
+//        JPanel activityPanel = new JPanel(new BorderLayout());
+//        activityPanel.setBorder(new LineBorder(UITheme.CARD_BORDER, 1, true));
+//        activityPanel.setBackground(UITheme.CARD_BG);
+//        activityPanel.add(new JLabel("Recent Activity"), BorderLayout.NORTH);
+//        activityPanel.add(activityScroll, BorderLayout.CENTER);
+//
+
+        root.add(stats);
+        root.add(Box.createVerticalStrut(16));
+        root.add(welcome);
+        root.add(Box.createVerticalStrut(16));
+        root.add(actions);
+        root.add(Box.createVerticalStrut(16));
+//        root.add(activityPanel);
+
+        return root;
     }
 
-    private Color blend(Color base, Color overlay, float ratio) {
-        return new Color(
-                (int) (base.getRed() * ratio + overlay.getRed() * (1 - ratio)),
-                (int) (base.getGreen() * ratio + overlay.getGreen() * (1 - ratio)),
-                (int) (base.getBlue() * ratio + overlay.getBlue() * (1 - ratio))
-        );
+    private JPanel stat(String title, int value) {
+        JPanel p = new JPanel(new BorderLayout());
+        p.setBackground(UITheme.CARD_BG);
+        p.setBorder(new LineBorder(UITheme.CARD_BORDER, 1, true));
+
+        JLabel t = new JLabel(title);
+        JLabel v = new JLabel(String.valueOf(value));
+
+        t.setForeground(UITheme.TEXT_SECONDARY);
+        v.setFont(UITheme.FONT_STAT);
+        v.setForeground(UITheme.ACCENT);
+
+        p.add(t, BorderLayout.NORTH);
+        p.add(v, BorderLayout.CENTER);
+
+        return p;
     }
 }
