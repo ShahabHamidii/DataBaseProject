@@ -4,7 +4,6 @@ import dao.UserDAO;
 import database.DBConnection;
 import model.User;
 import util.UITheme;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;

@@ -7,10 +7,8 @@ import model.Instructor;
 import model.Student;
 import util.UITheme;
 import util.UIUtil;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 
 public class AdvisorPanel extends JPanel {
 
@@ -125,4 +123,5 @@ public class AdvisorPanel extends JPanel {
             loadAssignments();
         }
     }
+
 }

@@ -37,6 +37,7 @@ public class StudentPanel extends JPanel {
 
         loadStudents();
     }
+
     private void initComponents() {
 
         idField = new JTextField();
@@ -516,4 +517,5 @@ public class StudentPanel extends JPanel {
                 ).toString()
         );
     }
+
 }

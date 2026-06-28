@@ -5,7 +5,6 @@ import model.Course;
 import util.UITheme;
 import util.UIUtil;
 import util.ValidationUtil;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;

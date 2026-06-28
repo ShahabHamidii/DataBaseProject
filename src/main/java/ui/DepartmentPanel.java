@@ -8,7 +8,6 @@ import util.ValidationUtil;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 
 public class DepartmentPanel extends JPanel {
 
