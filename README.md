@@ -13,7 +13,7 @@
 
 <p align="center">
   A professional desktop application for managing university records.<br/>
-  Built with <strong>Java + JDBC + MySQL</strong> — covering SQL Chapters 3, 4 & 5.
+  Built with <strong>Java + JDBC + MySQL</strong>.
 </p>
 
 </div>
