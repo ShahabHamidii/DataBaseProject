@@ -241,21 +241,6 @@ java -jar target/university-management-system.jar
 </dependency>
 ```
 
----
-
-## 📁 Screenshots Setup
-
-Place your screenshots in a `screenshots/` folder at the root of the project:
-```
-screenshots/
-├── login.png
-├── dashboard.png
-├── students.png
-└── reports.png
-```
-
----
-
 ## 📖 References
 
 - Silberschatz, A., Korth, H. F., and Sudarshan, S. — *Database System Concepts*
